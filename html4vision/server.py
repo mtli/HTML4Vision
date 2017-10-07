@@ -4,9 +4,9 @@ import os
 from flask import Flask
 from flask import send_from_directory
 
-app = Flask(__name__, static_url_path='', root_path=os.getcwd())
+app = Flask(__name__, static_url_path='/dummy/path/to/avoid/conflict', root_path=os.getcwd())
 
-@app.route('/<path>')
+@app.route('/<path:path>')
 def sendfile(path):
     return send_from_directory('', path)
 
