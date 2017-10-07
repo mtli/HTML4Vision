@@ -1,4 +1,6 @@
 from __future__ import print_function
+from codecs import open
+
 from collections import namedtuple
 from glob import glob
 
