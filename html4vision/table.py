@@ -8,14 +8,26 @@ import dominate
 from dominate.tags import *
 from dominate.util import text
 
-Col = namedtuple('Col', 'type, name, content, range, style')
+Col = namedtuple('Col', 'type, name, content, subset, style')
 Col.__new__.__defaults__ = ('img',) + (None,) * (len(Col._fields) - 1)
+
+def _subsetsel(content, subset):
+    if isinstance(subset, int):
+        return content[:subset]
+    if type(subset) is tuple: # namedtuple is not allowed here
+        if len(subset) == 2:
+            return content[subset[0]:subset[1]]
+        elif len(subset) == 3:
+            return content[subset[0]:subset[1]:subset[2]]
+    if isinstance(subset, list):
+        return [content[i] for i in subset]
+    raise ValueError('Unrecognized subset value')
 
 def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, style=None):
     # parse the columns
     match_col = None
     if imsize:
-        if isinstance(imsize, (int)) and imsize >= 0:
+        if isinstance(imsize, int) and imsize >= 0:
             match_col = imsize
             imsize = None
             if cols[match_col].type == 'overlay':
@@ -40,19 +52,15 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
             col_idx_no_overlay[i] = col_idx
             col_idx += 1
         elif col.type == 'text':
-            #if col.range:
-            #    tt = col.content[col.range[0]:col.range[1]]
-            #    col.content = tt
-            #col_n_row[i] = len(col.content)
-
-            col_bug[i] = col.content[col.range[0]:col.range[1]] if col.range else col.content
-            col_n_row[i] = len(col_bug[i])
+            if col.subset:
+                cols[i] = col._replace(content=_subsetsel(col.content, col.subset))
+            col_n_row[i] = len(cols[i].content)
         elif col.type == 'img' or col.type == 'overlay':
             col_src[i] = glob(col.content)
             if len(col_src[i]) == 0:
                 print('Warning: Col %d: no files found matching "%s"' % (i, col.content))
-            if col.range:
-                col_src[i] = col_src[i][col.range[0]:col.range[1]]
+            if col.subset:
+                col_src[i] = _subsetsel(col_src[i], col.subset)
             col_n_row[i] = len(col_src[i])
             if col.type == 'overlay':
                if i == 0 or cols[i-1].type != 'img':
@@ -104,8 +112,7 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
                                 td(r+1)
                             elif col.type == 'text':
                                 if r < col_n_row[i]:
-                                    #td(col.content[r])
-                                    td(col_bug[i][r])
+                                    td(col.content[r])
                                 else:
                                     td()
                             elif col.type == 'overlay':
