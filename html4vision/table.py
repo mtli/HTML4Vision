@@ -47,10 +47,10 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
     col_idx = 0
 
     for i, col in enumerate(cols):
+        col_idx += 1
+        col_idx_no_overlay[i] = col_idx
         if col.type == 'id0' or col.type == 'id1':
             col_n_row[i] = 0
-            col_idx_no_overlay[i] = col_idx
-            col_idx += 1
         elif col.type == 'text':
             if col.subset:
                 cols[i] = col._replace(content=_subsetsel(col.content, col.subset))
@@ -68,10 +68,8 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
                else:
                    use_overlay = True
                    col_pre_overlay[i-1] = True
-                   col_idx_no_overlay[i] = col_idx - 1
-            else:
-                col_idx_no_overlay[i] = col_idx
-                col_idx += 1
+                   col_idx -= 1
+                   col_idx_no_overlay[i] = col_idx
 
     n_row = max(col_n_row)
     match_col = col_idx_no_overlay[match_col] if match_col else match_col
