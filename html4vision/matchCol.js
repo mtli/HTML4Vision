@@ -1,4 +1,4 @@
-function addImgSize(matchColId, scale) {
+function matchCol(matchColId, scale) {
 	"use strict";
     function setRowImgSize(row, wStr, hStr) {
         for (var c = 0; c < row.cells.length; c++) {
@@ -20,8 +20,8 @@ function addImgSize(matchColId, scale) {
     }
 	
 	function imgLoaded(row) {
-		var wStr = String(this.naturalWidth*scale) + "px";
-		var hStr = String(this.naturalHeight*scale) + "px";
+		var wStr = this.naturalWidth*scale + "px";
+		var hStr = this.naturalHeight*scale + "px";
 		setRowImgSize(row, wStr, hStr);
 	}
 	
@@ -36,8 +36,8 @@ function addImgSize(matchColId, scale) {
 				ele = ele.firstElementChild;
 			if (!ele || ele.tagName !== "IMG") continue;
 			if (ele.complete || ele.naturalWidth > 0) {
-				var wStr = String(ele.naturalWidth*scale) + "px";
-				var hStr = String(ele.naturalHeight*scale) + "px";
+				var wStr = ele.naturalWidth*scale + "px";
+				var hStr = ele.naturalHeight*scale + "px";
 				setRowImgSize(row, wStr, hStr);
 			} else {
                 ele.onload = imgLoaded.bind(ele, row);

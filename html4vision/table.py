@@ -26,7 +26,7 @@ def _subsetsel(content, subset):
 def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, style=None):
     # parse the columns
     match_col = None
-    if imsize:
+    if imsize != None:
         if isinstance(imsize, int) and imsize >= 0:
             match_col = imsize
             imsize = None
@@ -136,11 +136,18 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
                                         td(img(src=col_src[i][r]))
                                 else:
                                     td()
-        if match_col:
+
+        if match_col != None:
             import os
             filedir = os.path.dirname(os.path.realpath(__file__))
-            tablejs = open(os.path.join(filedir, 'table.js')).read()
-            tablejs += '\naddImgSize(%d, %g);\n' % (match_col, imscale)
+            tablejs = open(os.path.join(filedir, 'matchCol.js')).read()
+            tablejs += '\nmatchCol(%d, %g);\n' % (match_col, imscale)
+            script(text(tablejs, escape=False))
+        elif imscale != 1:
+            import os
+            filedir = os.path.dirname(os.path.realpath(__file__))
+            tablejs = open(os.path.join(filedir, 'scaleImg.js')).read()
+            tablejs += '\nscaleImg(%g);\n' % (imscale)
             script(text(tablejs, escape=False))
 
     with open(outfile, 'w', encoding='utf-8') as f:
