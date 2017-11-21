@@ -47,8 +47,8 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
     col_idx = 0
 
     for i, col in enumerate(cols):
-        col_idx += 1
         col_idx_no_overlay[i] = col_idx
+        col_idx += 1
         if col.type == 'id0' or col.type == 'id1':
             col_n_row[i] = 0
         elif col.type == 'text':
@@ -69,7 +69,7 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
                    use_overlay = True
                    col_pre_overlay[i-1] = True
                    col_idx -= 1
-                   col_idx_no_overlay[i] = col_idx
+                   col_idx_no_overlay[i] -= 1
 
     n_row = max(col_n_row)
     match_col = col_idx_no_overlay[match_col] if match_col else match_col
@@ -140,15 +140,15 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
         if match_col != None:
             import os
             filedir = os.path.dirname(os.path.realpath(__file__))
-            tablejs = open(os.path.join(filedir, 'matchCol.js')).read()
-            tablejs += '\nmatchCol(%d, %g);\n' % (match_col, imscale)
-            script(text(tablejs, escape=False))
+            jscode = open(os.path.join(filedir, 'matchCol.js')).read()
+            jscode += '\nmatchCol(%d, %g);\n' % (match_col, imscale)
+            script(text(jscode, escape=False))
         elif imscale != 1:
             import os
             filedir = os.path.dirname(os.path.realpath(__file__))
-            tablejs = open(os.path.join(filedir, 'scaleImg.js')).read()
-            tablejs += '\nscaleImg(%g);\n' % (imscale)
-            script(text(tablejs, escape=False))
+            jscode = open(os.path.join(filedir, 'scaleImg.js')).read()
+            jscode += '\nscaleImg(%g);\n' % (imscale)
+            script(text(jscode, escape=False))
 
     with open(outfile, 'w', encoding='utf-8') as f:
         f.write(doc.render())
