@@ -32,8 +32,11 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
             imsize = None
             if cols[match_col].type == 'overlay':
                 raise ValueError('The column can not be of type "overlay" when "imsize" interpreted as size matching column given index')
-        elif not(isinstance(imsize, list) and len(imsize) == 2 and imsize[0] > 0 and imsize[1] > 0):
-            raise ValueError('"imsize" needs to be None, a column index, or a list of size 2 specifying the width and the height')
+        elif not((isinstance(imsize, list) or type(imsize) is tuple) and len(imsize) == 2 and imsize[0] > 0 and imsize[1] > 0):
+            raise ValueError('"imsize" needs to be None, a column index, or a list/tuple of size 2 specifying the width and the height')
+
+    if imsize != None and imscale != 1:
+        imsize = (imsize[0]*imscale, imsize[1]*imscale)
 
     n_col = len(cols)
     col_src = [None]*n_col
@@ -143,7 +146,7 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
             jscode = open(os.path.join(filedir, 'matchCol.js')).read()
             jscode += '\nmatchCol(%d, %g);\n' % (match_col, imscale)
             script(text(jscode, escape=False))
-        elif imscale != 1:
+        elif imsize == None and imscale != 1:
             import os
             filedir = os.path.dirname(os.path.realpath(__file__))
             jscode = open(os.path.join(filedir, 'scaleImg.js')).read()
