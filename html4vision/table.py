@@ -81,17 +81,19 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
     with dominate.document(title=title) as doc:
         with doc.head:
             css = 'table.html4vision {text-align: center}\n'
+            css += '.html4vision td {vertical-align: middle}\n'
+            css += '.html4vision td img {display:table-cell}\n'
             if use_overlay:
-                css += '.html4vision div {position: relative; display: inline-block}\n'
+                css += '.html4vision div {position: relative; display: table-cell}\n'
                 css += '.overlay {position: absolute; left: 0; top: 0}\n'
             if style:
                 css += style + '\n'
             for i, col in enumerate(cols):
                 if col.style:
                     if col.type == 'overlay':
-                        css += 'td:nth-child(%d) img.overlay {%s}\n' % (col_idx_no_overlay[i], col.style)
-                    else:
-                        css += 'td:nth-child(%d) {%s}\n' % (col_idx_no_overlay[i], col.style)
+                        css += 'td:nth-child(%d) img.overlay {%s}\n' % (col_idx_no_overlay[i] + 1, col.style)
+                    else: # css uses 1-based indexing
+                        css += 'td:nth-child(%d) {%s}\n' % (col_idx_no_overlay[i] + 1, col.style)
             dominate.tags.style(text(css, escape=False))
         with table(cls='html4vision'):
             with thead():
