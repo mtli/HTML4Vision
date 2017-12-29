@@ -1,5 +1,5 @@
 # HTML4Vision
-A simple HTML visualization tool for computer vision projects
+Simple HTML visualization for computer vision projects
 
 ![demo](examples/basic.png)
 
