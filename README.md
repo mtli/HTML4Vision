@@ -47,7 +47,7 @@ Col(type, name, content, subset, style)
 ```python
 imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, style=None)
 ```
-The meaning of the first three arguments are straightforward. Please refer to [size control](#size-control) for controlling the image size through `imsize` and `imscale`. The `style` is a string of CSS rules for the entire HTML document.
+The meaning of the first three arguments are straightforward. Please refer to [size control](#size-control) for controlling the image size with `imsize` and `imscale`. The `style` is a string of CSS rules for the entire HTML document.
 
 ## Web publishing
 
