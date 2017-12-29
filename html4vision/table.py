@@ -30,8 +30,8 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
         if isinstance(imsize, int) and imsize >= 0:
             match_col = imsize
             imsize = None
-            if cols[match_col].type == 'overlay':
-                raise ValueError('The column can not be of type "overlay" when "imsize" interpreted as size matching column given index')
+            if cols[match_col].type != 'img':
+                raise ValueError('Invalid column type "' + cols[match_col].type + '" when "imsize" is interpreted as size matching column given index')
         elif not((isinstance(imsize, list) or type(imsize) is tuple) and len(imsize) == 2 and imsize[0] > 0 and imsize[1] > 0):
             raise ValueError('"imsize" needs to be None, a column index, or a list/tuple of size 2 specifying the width and the height')
 

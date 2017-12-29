@@ -105,3 +105,4 @@ ENV/
 
 # custom
 tests/
+examples/*.html
