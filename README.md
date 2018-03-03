@@ -40,7 +40,7 @@ Col(type, name, content, subset, style)
 ```
 - `type`: 'text' for text, 'img' for images, 'overlay' for [image overlay](#image-overlay), 'id0' for zero-based indices and 'id1' for one-based indices.
 - `name`: the name of the column.
-- `content`: for images (both 'img' and 'overlay'), it is a [glob pattern](https://docs.python.org/3/library/glob.html); for text, it is a list of strings; it is `None` for all other types (indexing is automatic).
+- `content`: for images (both 'img' and 'overlay'), it is a [glob pattern](https://docs.python.org/3/library/glob.html) or a list of the paths of the images; for text, it is a list of strings; it is `None` for all other types (indexing is automatic).
 - `subset`: subset selection of the `content` provided. If `subset` is a single integer, it is interpreted as length `n` and the first `n` items are selected; if `subset` is a `tuple`, it is interpreted in the form of `(start, stop)` or `(start, step, stop)`; if `subset` is a `list`, it is interpreted as a list of indices to be selected.
 - `style`: a string of CSS rules for the entire column. See [styling through CSS](#styling-through-CSS) for more.
 

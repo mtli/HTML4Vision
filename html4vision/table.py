@@ -59,9 +59,12 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
                 cols[i] = col._replace(content=_subsetsel(col.content, col.subset))
             col_n_row[i] = len(cols[i].content)
         elif col.type == 'img' or col.type == 'overlay':
-            col_src[i] = sorted(glob(col.content))
-            if len(col_src[i]) == 0:
-                print('Warning: Col %d: no files found matching "%s"' % (i, col.content))
+            if isinstance(col.content, list):
+                col_src[i] = col.content
+            else:
+                col_src[i] = sorted(glob(col.content))
+                if len(col_src[i]) == 0:
+                    print('Warning: Col %d: no files found matching "%s"' % (i, col.content))
             if col.subset:
                 col_src[i] = _subsetsel(col_src[i], col.subset)
             col_n_row[i] = len(col_src[i])
