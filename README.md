@@ -5,8 +5,9 @@ Simple HTML visualization for computer vision projects
 ![demo](examples/basic.png)
 
 - Easy [table description and generation](#table-description-and-generation) for algorithm comparison and pipeline visualization
-- Handy [formatting controls](#formatting) to make nice figures
+- Handy [formatting controls](#formatting) to make pretty figures
 - [Web publishing](#web-publishing) for remote browsering
+- <span style="color:red"><b>NEW!</b></span> (>= 0.1.8) Interactive figures
 
 ## Installation
 ```
@@ -46,9 +47,9 @@ Col(type, name, content, subset, style)
 
 ### Generation syntax
 ```python
-imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, style=None)
+imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, style=None, interactive=False)
 ```
-The meaning of the first three arguments are straightforward. Please refer to [size control](#size-control) for controlling the image size with `imsize` and `imscale`. The `style` is a string of CSS rules for the entire HTML document.
+The meaning of the first three arguments are straightforward. Please refer to [size control](#size-control) for controlling the image size with `imsize` and `imscale`. The `style` is a string of CSS rules for the entire HTML document. The `interactive` is a flag for [interactivity](#interactivity).
 
 ## Web publishing
 
@@ -88,3 +89,9 @@ Example: `examples/overlay.py`
 Since the generated table is in HTML, you can have much more freedom in controling the format through CSS. Below is a simple example of highlighting a particular column and particular row by changing the background color. But of course, you can do a lot more with CSS.
 
 Example: `examples/formatting.py`
+
+## Interactivity
+
+Currently, only one type of interaction is supported. Click anywhere on the page to toggle the image overlay.
+
+Example: `examples/overlay.py`

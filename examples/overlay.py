@@ -8,4 +8,4 @@ cols = [
     Col('overlay', '', 'images/*_label.png', 1, 'opacity: 0.4'),
 ]
 
-imagetable(cols, 'overlay.html', 'Image Overlay', imscale=1.5)
+imagetable(cols, 'overlay.html', 'Image Overlay', imscale=1.5, interactive=True)

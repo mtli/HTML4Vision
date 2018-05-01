@@ -23,7 +23,7 @@ def _subsetsel(content, subset):
         return [content[i] for i in subset]
     raise ValueError('Unrecognized subset value')
 
-def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, style=None):
+def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, style=None, interactive=False):
     # parse the columns
     match_col = None
     if imsize != None:
@@ -145,17 +145,22 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
                                 else:
                                     td()
 
-        if match_col != None:
+        def getjs(filename):
             import os
             filedir = os.path.dirname(os.path.realpath(__file__))
-            jscode = open(os.path.join(filedir, 'matchCol.js')).read()
+            jscode = open(os.path.join(filedir, filename)).read()
+            return jscode
+            
+        if match_col != None:
+            jscode = getjs('matchCol.js')
             jscode += '\nmatchCol(%d, %g);\n' % (match_col, imscale)
             script(text(jscode, escape=False))
         elif imsize == None and imscale != 1:
-            import os
-            filedir = os.path.dirname(os.path.realpath(__file__))
-            jscode = open(os.path.join(filedir, 'scaleImg.js')).read()
+            jscode = getjs('scaleImg.js')
             jscode += '\nscaleImg(%g);\n' % (imscale)
+            script(text(jscode, escape=False))
+        if interactive:
+            jscode = getjs('interactive.js')
             script(text(jscode, escape=False))
 
     with open(outfile, 'w', encoding='utf-8') as f:
