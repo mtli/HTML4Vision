@@ -50,11 +50,11 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
     col_idx = 0
 
     if pathrep:
-        if type(pathrep) is tuple or isinstance(subset, list):
-            pathrep_old = pathrep[0]
+        if type(pathrep) is tuple or isinstance(pathrep, list):
+            pathrep_old = pathrep[0].replace('\\', '/')
             pathrep_new = pathrep[1]
         else:
-            pathrep_old = pathrep
+            pathrep_old = pathrep.replace('\\', '/')
             pathrep_new = ''
 
     for i, col in enumerate(cols):
@@ -76,7 +76,7 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
             if col.subset:
                 col_src[i] = _subsetsel(col_src[i], col.subset)
             if pathrep:
-                col_src[i] = [s.replace(pathrep_old, pathrep_new) for s in col_src[i]]
+                col_src[i] = [s.replace('\\', '/').replace(pathrep_old, pathrep_new) for s in col_src[i]]
             col_n_row[i] = len(col_src[i])
             if col.type == 'overlay':
                if i == 0 or cols[i-1].type != 'img':
