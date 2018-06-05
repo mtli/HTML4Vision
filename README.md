@@ -66,9 +66,8 @@ The default port is 6096. To specify a port (e.g. 23333), run
 python -m html4vision.server 23333
 ```
 
-
 ## Search path and publish path
-The search path, i.e., the path used looking for the images in the python script, might be different from the publish path, i.e., the path that is encoded in the generated HTML. This is typically the case when you want to generate the HTML file to a path other than the current folder. The `pathrep` argument is designed for this case. See 
+The search path, i.e., the path used looking for the images in the python script, might be different from the publish path, i.e., the path that is encoded in the generated HTML. It is typically the case when you want to generate the HTML file to a path other than the current folder. The `pathrep` argument is designed for this case. It can be a string, or a tuple of two strings. The former specifies the part of path to be removed while the latter specifies the one replacing it.
 
 Example: `examples/pathrep.py`
 
