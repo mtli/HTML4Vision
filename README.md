@@ -47,9 +47,9 @@ Col(type, name, content, subset, style)
 
 ### Generation syntax
 ```python
-imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, style=None, interactive=False)
+imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, style=None, interactive=False, pathrep=None)
 ```
-The meaning of the first three arguments are straightforward. Please refer to [size control](#size-control) for controlling the image size with `imsize` and `imscale`. The `style` is a string of CSS rules for the entire HTML document. The `interactive` is a flag for [interactivity](#interactivity).
+The meaning of the first three arguments are straightforward. Please refer to [size control](#size-control) for controlling the image size with `imsize` and `imscale`. The `style` is a string of CSS rules for the entire HTML document. The `interactive` is a flag for [interactivity](#interactivity). The `pathrep` is for [generating the HMTL file to a different folder](#search-path-and-publish-path).
 
 ## Web publishing
 
@@ -65,6 +65,12 @@ The default port is 6096. To specify a port (e.g. 23333), run
 ```
 python -m html4vision.server 23333
 ```
+
+
+## Search path and publish path
+The search path, i.e., the path used looking for the images in the python script, might be different from the publish path, i.e., the path that is encoded in the generated HTML. This is typically the case when you want to generate the HTML file to a path other than the current folder. The `pathrep` argument is designed for this case. See 
+
+Example: `examples/pathrep.py`
 
 ## Formatting
 

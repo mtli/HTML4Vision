@@ -23,7 +23,7 @@ def _subsetsel(content, subset):
         return [content[i] for i in subset]
     raise ValueError('Unrecognized subset value')
 
-def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, style=None, interactive=False):
+def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, style=None, interactive=False, pathrep=None):
     # parse the columns
     match_col = None
     if imsize != None:
@@ -49,6 +49,14 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
     col_idx_no_overlay = [None]*n_col
     col_idx = 0
 
+    if pathrep:
+        if type(pathrep) is tuple or isinstance(subset, list):
+            pathrep_old = pathrep[0]
+            pathrep_new = pathrep[1]
+        else:
+            pathrep_old = pathrep
+            pathrep_new = ''
+
     for i, col in enumerate(cols):
         col_idx_no_overlay[i] = col_idx
         col_idx += 1
@@ -67,6 +75,8 @@ def imagetable(cols, outfile='index.html', title='', imsize=None, imscale=1, sty
                     print('Warning: Col %d: no files found matching "%s"' % (i, col.content))
             if col.subset:
                 col_src[i] = _subsetsel(col_src[i], col.subset)
+            if pathrep:
+                col_src[i] = [s.replace(pathrep_old, pathrep_new) for s in col_src[i]]
             col_n_row[i] = len(col_src[i])
             if col.type == 'overlay':
                if i == 0 or cols[i-1].type != 'img':
