@@ -3,7 +3,7 @@ A simple HTML visualization tool for computer vision research
 [https://github.com/mtli/HTML4Vision](https://github.com/mtli/HTML4Vision)
 
 <p align="center">
-    <img alt="demo" src="examples/sort.png" height="400px">
+    <img alt="demo" src="examples/sort.png" width="500px">
 </p>
 
 - Easy [table description and generation](#table-description-and-generation) for algorithm comparison and pipeline visualization
