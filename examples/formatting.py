@@ -11,8 +11,8 @@ cols = [
 imagetable(
     cols,               
     'formatting.html',
-    imsize=1,      # resize sketch svg to match corresponding image size (column 1)
-    imscale=0.4,   # scale all images to 40%
+    imsize=0,      # resize sketch svg to match corresponding image size (column 0)
+    imscale=0.5,   # scale all images to 50%
     # adding image border and box shadows to the entire table
     style='img {border: 1px solid black;-webkit-box-shadow: 2px 2px 1px #ccc; box-shadow: 2px 2px 1px #ccc;}',
 )

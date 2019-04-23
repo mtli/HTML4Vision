@@ -1,7 +1,6 @@
 from html4vision import Col, imagetable
 
 cols = [
-    Col('id1', 'ID'), # 1-based indexing
     Col('img', 'Image', 'images/road_*_image.jpg'),
     Col('img', 'Label', 'images/road_*_label.png', 1), # 1 is used to select only the first item
     Col('img', 'Image + Label', 'images/road_*_image.jpg'),
