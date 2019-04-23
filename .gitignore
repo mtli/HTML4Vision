@@ -103,6 +103,11 @@ ENV/
 # Visual Studio
 .vs
 
+# Visual Studio Code
+.vscode
+
 # custom
+nosync/
 tests/
 examples/*.html
+examples/another-dir/*.html

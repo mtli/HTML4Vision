@@ -1,3 +1,3 @@
-__version__ = '0.1.8'
+__version__ = '0.2.1'
 
 from .table import Col, imagetable
