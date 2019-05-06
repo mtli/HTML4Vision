@@ -19,8 +19,8 @@ with open(path.join(here, 'html4vision', '__init__.py'), encoding='utf-8') as f:
 setup(
     name='HTML4Vision',
     version=version,
-    description='Simple HTML visualization for computer vision projects',
-    long_description=open('README.md', encoding='utf-8').read(),
+    description='A simple HTML visualization tool for computer vision research',
+    long_description='See project page: https://github.com/mtli/HTML4Vision',
     url='https://github.com/mtli/HTML4Vision',
     author='Mengtian (Martin) Li',
     author_email='martinli.work@gmail.com',

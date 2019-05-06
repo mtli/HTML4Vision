@@ -45,13 +45,14 @@ Example: `examples/basic.py`
 
 The table is described by a list of `Col` objects. 
 ```
-Col(type, name, content, subset, style)
+Col(type, name, content, subset, style, href)
 ```
 - `type`: 'text' for text, 'img' for images, 'overlay' for [image overlay](#image-overlay), 'id0' for zero-based indices and 'id1' for one-based indices.
 - `name`: the name of the column.
 - `content`: for images (both 'img' and 'overlay'), it is a [glob pattern](https://docs.python.org/3/library/glob.html) or a list of the image paths; for text, it is a list of strings; it is `None` for all other types (indexing is automatic).
 - `subset`: subset selection of the `content` provided. If `subset` is a single integer, it is interpreted as length `n` and the first `n` items are selected; if `subset` is a `tuple`, it is interpreted in the form of `(start, stop)` or `(start, step, stop)`; if `subset` is a `list`, it is interpreted as a list of indices to be selected.
 - `style`: a string of CSS rules for the entire column. See [styling through CSS](#styling-through-CSS) for more.
+- `href`: either a [glob pattern](https://docs.python.org/3/library/glob.html) or a list of URLs, works in the same way as `content` for `img` columns.
 
 ### Generation syntax
 
@@ -140,7 +141,7 @@ The sorting feature comes in handy when you have statistics for each data point 
 
 Once interactive sorting is enabled, a style template can be specified with `sort_style`. For a list of templates, check files contains "theme" [here](https://cdnjs.com/libraries/jquery.tablesorter/2.30.7). Zebra stripes can be added to the table if `zebra` is set to `True`. When you have too many columns, it might be useful to enable (set `sticky_header` to `True`) to keep track of the columns as you scroll down the page. Note that some features may seem irrelevant to sorting, yet they only work when `sortable` is `True`.
 
-In addition, you will find how to specify a summary row with a particular color in the follow example.
+In addition, you will find how to specify a summary row with a particular color in the following example.
 
 Example: `examples/sort.py`
 
@@ -149,3 +150,8 @@ Example: `examples/sort.py`
 When image overlay is used and `overlay_toggle` is set to `True`, you can click the overlaid images to toggle image overlay.
 
 Example: `examples/overlay.py`
+
+## Hyperlinks
+The `href` field is designed to create a clickable link for table items. All column types support `href` as long as the column content is non-empty. It works in the same way as the `content` field of `img` columns &mdash; it will synergize with `subset` selection and the `pathrep` argument if specified (see [here](#search-path-and-publish-path)). For overlay columns, `href` should be attached to the preceding `img` column and it cannot be used together with `overlay_toggle=True` since they both bind to the mouse click.
+
+Example: `examples/href.py`

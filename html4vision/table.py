@@ -8,7 +8,7 @@ import dominate
 from dominate.tags import *
 from dominate.util import text
 
-Col = namedtuple('Col', 'type, name, content, subset, style')
+Col = namedtuple('Col', 'type, name, content, subset, style, href')
 Col.__new__.__defaults__ = ('img',) + (None,) * (len(Col._fields) - 1)
 
 def _subsetsel(content, subset):
@@ -23,7 +23,7 @@ def _subsetsel(content, subset):
         return [content[i] for i in subset]
     raise ValueError('Unrecognized subset value')
 
-# wrapper classes to remove empty attributes
+# wrapper class to remove empty attributes
 class _img(html_tag):
     tagname = 'img'
     def __init__(self, *args, **kwargs):
@@ -34,6 +34,14 @@ class _img(html_tag):
         for attr in empty_attrs:
             del kwargs[attr]
         super(_img, self).__init__(*args, **kwargs)
+
+# wrapper function that adds anchor tag on demand
+def _tda(href_list, row, *args, **kwargs):
+    if href_list and row < len(href_list) and href_list[row]:
+        return td(**kwargs).add(a(*args, href=href_list[row], target='_blank'))
+    else:
+        return td(*args, **kwargs)
+
 
 def imagetable(
         # contents
@@ -85,6 +93,7 @@ def imagetable(
 
     # variables to store the processed contents
     col_content = [None]*n_col
+    col_href = [None]*n_col
     col_n_row = [None]*n_col
 
     use_overlay = False
@@ -133,6 +142,18 @@ def imagetable(
                    col_idx_no_overlay[i] -= 1
         else:
             raise ValueError('Col %d: unrecognized column type "%s"' % (i, col.type))
+        
+        if col.href:
+            if isinstance(col.href, list):
+                col_href[i] = col.href
+            else:
+                col_href[i] = sorted(glob(col.href))
+                if len(col_href[i]) == 0:
+                    print('Warning: Col %d href: no files found matching "%s"' % (i, col.href))
+            if col.subset:
+                col_href[i] = _subsetsel(col_href[i], col.subset)
+            if pathrep:
+                col_href[i] = [s.replace('\\', '/').replace(pathrep_old, pathrep_new) for s in col_href[i]]
 
     n_row = max(col_n_row)
     match_col = col_idx_no_overlay[match_col] if match_col else match_col
@@ -145,6 +166,8 @@ def imagetable(
         for i in range(n_col):
             if col_n_row[i]:
                 col_content[i] = [col_content[i][x] if x < col_n_row[i] else '' for x in sorted_idx]
+                if col_href[i]:
+                    col_href[i] = [col_href[i][x] if x < len(col_href[i]) else '' for x in sorted_idx]
                 col_n_row[i] = max(n_item, col_n_row[i]) # the sort list can be longer than others
 
     cdn = 'https://cdnjs.cloudflare.com/ajax/libs/'
@@ -235,18 +258,20 @@ def imagetable(
                     with tr():
                         for i, col in enumerate(cols):
                             if col.type == 'id0':
-                                td(sorted_idx[r] if sortcol != None else r)
+                                idx = sorted_idx[r] if sortcol != None else r
+                                _tda(col_href[i], r, idx)
                             elif col.type == 'id1':
-                                td(sorted_idx[r]+1 if sortcol != None else r+1)
+                                idx = sorted_idx[r] if sortcol != None else r
+                                _tda(col_href[i], r, idx + 1)
                             elif col.type == 'text':
                                 if r < col_n_row[i]:
-                                    td(col_content[i][r])
+                                    _tda(col_href[i], r, col_content[i][r])
                                 else:
                                     td()
                             elif col.type == 'overlay':
                                 continue
                             elif col_pre_overlay[i]:
-                                with td():
+                                with _tda(col_href[i], r):
                                     with div():
                                         if r < col_n_row[i]:
                                             _img(src=col_content[i][r], width=imsize[0], height=imsize[1])
@@ -254,7 +279,7 @@ def imagetable(
                                             _img(src=col_content[i+1][r], cls='overlay', width=imsize[0], height=imsize[1])
                             else:
                                 if r < col_n_row[i]:
-                                    td(_img(src=col_content[i][r], width=imsize[0], height=imsize[1]))
+                                    _tda(col_href[i], r, _img(src=col_content[i][r], width=imsize[0], height=imsize[1]))
                                 else:
                                     td()
         if copyright:
