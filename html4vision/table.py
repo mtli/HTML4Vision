@@ -2,45 +2,16 @@ from __future__ import print_function
 from codecs import open
 
 from collections import namedtuple
-from glob import glob
 
 import dominate
 from dominate.tags import *
 from dominate.util import text
 
+from .common import *
+
+
 Col = namedtuple('Col', 'type, name, content, subset, style, href')
 Col.__new__.__defaults__ = ('img',) + (None,) * (len(Col._fields) - 1)
-
-def _subsetsel(content, subset):
-    if isinstance(subset, int):
-        return content[:subset]
-    if type(subset) is tuple: # namedtuple is not allowed here
-        if len(subset) == 2:
-            return content[subset[0]:subset[1]]
-        elif len(subset) == 3:
-            return content[subset[0]:subset[1]:subset[2]]
-    if isinstance(subset, list):
-        return [content[i] for i in subset]
-    raise ValueError('Unrecognized subset value')
-
-# wrapper class to remove empty attributes
-class _img(html_tag):
-    tagname = 'img'
-    def __init__(self, *args, **kwargs):
-        empty_attrs = []
-        for attr, value in kwargs.items():
-            if not value:
-                empty_attrs.append(attr)
-        for attr in empty_attrs:
-            del kwargs[attr]
-        super(_img, self).__init__(*args, **kwargs)
-
-# wrapper function that adds anchor tag on demand
-def _tda(href_list, row, *args, **kwargs):
-    if href_list and row < len(href_list) and href_list[row]:
-        return td(**kwargs).add(a(*args, href=href_list[row], target='_blank'))
-    else:
-        return td(*args, **kwargs)
 
 
 def imagetable(
@@ -72,20 +43,20 @@ def imagetable(
     n_col = len(cols)
 
     match_col = None
-    if imsize != None:
+    if imsize is not None:
         if isinstance(imsize, int) and imsize >= 0 and imsize < n_col:
             match_col = imsize
             imsize = None
             if cols[match_col].type != 'img':
-                raise ValueError('Invalid column type "' + cols[match_col].type + '" when "imsize" is interpreted as size matching column given index')
+                raise ValueError('Invalid column type "' + cols[match_col].type + '" when "imsize" is interpreted as size matching column given index')       
         elif not((isinstance(imsize, list) or type(imsize) is tuple) and len(imsize) == 2 and imsize[0] > 0 and imsize[1] > 0):
             raise ValueError('"imsize" needs to be a column index, or a list/tuple of size 2 specifying the width and the height')
-    if imsize != None and imscale != 1:
+    if imsize is not None and imscale != 1:
         imsize = (imsize[0]*imscale, imsize[1]*imscale)
-    if not imsize:
+    if imsize is None:
         imsize = [None, None]
 
-    if sortcol != None:
+    if sortcol is not None:
         if not isinstance(sortcol, int) or sortcol < 0 or sortcol >= n_col:
             raise ValueError('"sortcol" needs to be a column index')
         if cols[sortcol].type != 'text':
@@ -101,13 +72,7 @@ def imagetable(
     col_idx_no_overlay = [None]*n_col
     col_idx = 0
 
-    if pathrep:
-        if type(pathrep) is tuple or isinstance(pathrep, list):
-            pathrep_old = pathrep[0].replace('\\', '/')
-            pathrep_new = pathrep[1]
-        else:
-            pathrep_old = pathrep.replace('\\', '/')
-            pathrep_new = ''
+    pathrep = parse_pathrep(pathrep)
 
     for i, col in enumerate(cols):
         col_idx_no_overlay[i] = col_idx
@@ -115,22 +80,10 @@ def imagetable(
         if col.type == 'id0' or col.type == 'id1':
             col_n_row[i] = 0
         elif col.type == 'text':
-            if col.subset:
-                col_content[i] = _subsetsel(col.content, col.subset)
-            else:
-                col_content[i] = col.content
+            col_content[i] = subsetsel(col.content, col.subset)
             col_n_row[i] = len(col_content[i])
         elif col.type == 'img' or col.type == 'overlay':
-            if isinstance(col.content, list):
-                col_content[i] = col.content
-            else:
-                col_content[i] = sorted(glob(col.content))
-                if len(col_content[i]) == 0:
-                    print('Warning: Col %d: no files found matching "%s"' % (i, col.content))
-            if col.subset:
-                col_content[i] = _subsetsel(col_content[i], col.subset)
-            if pathrep:
-                col_content[i] = [s.replace('\\', '/').replace(pathrep_old, pathrep_new) for s in col_content[i]]
+            col_content[i] = parse_content(col.content, col.subset, pathrep, 'Col %d' % i)
             col_n_row[i] = len(col_content[i])
             if col.type == 'overlay':
                if i == 0 or cols[i-1].type != 'img':
@@ -144,21 +97,12 @@ def imagetable(
             raise ValueError('Col %d: unrecognized column type "%s"' % (i, col.type))
         
         if col.href:
-            if isinstance(col.href, list):
-                col_href[i] = col.href
-            else:
-                col_href[i] = sorted(glob(col.href))
-                if len(col_href[i]) == 0:
-                    print('Warning: Col %d href: no files found matching "%s"' % (i, col.href))
-            if col.subset:
-                col_href[i] = _subsetsel(col_href[i], col.subset)
-            if pathrep:
-                col_href[i] = [s.replace('\\', '/').replace(pathrep_old, pathrep_new) for s in col_href[i]]
+            col_href[i] = parse_content(col.href, col.subset, pathrep, 'Col %d href' % i)
 
     n_row = max(col_n_row)
     match_col = col_idx_no_overlay[match_col] if match_col else match_col
 
-    if sortcol != None:
+    if sortcol is not None:
         sort_list = col_content[sortcol]
         n_item = len(sort_list)
         sorted_idx = sorted(list(range(n_item)), key=sort_list.__getitem__)
@@ -209,7 +153,7 @@ def imagetable(
             css += '.html4vision td {vertical-align: middle !important}\n'
             css += '.html4vision td img {display: table-cell}\n'
             if copyright:
-                css += '.copyright {margin-top: 0.5em; font-size: 85%}'
+                css += copyright_css()
 
             # style fix
             if sticky_header and sort_style == 'materialize':
@@ -258,44 +202,34 @@ def imagetable(
                     with tr():
                         for i, col in enumerate(cols):
                             if col.type == 'id0':
-                                idx = sorted_idx[r] if sortcol != None else r
-                                _tda(col_href[i], r, idx)
+                                idx = sorted_idx[r] if sortcol is not None else r
+                                tda(col_href[i], r, idx)
                             elif col.type == 'id1':
-                                idx = sorted_idx[r] if sortcol != None else r
-                                _tda(col_href[i], r, idx + 1)
+                                idx = sorted_idx[r] if sortcol is not None else r
+                                tda(col_href[i], r, idx + 1)
                             elif col.type == 'text':
                                 if r < col_n_row[i]:
-                                    _tda(col_href[i], r, col_content[i][r])
+                                    tda(col_href[i], r, col_content[i][r])
                                 else:
                                     td()
                             elif col.type == 'overlay':
                                 continue
                             elif col_pre_overlay[i]:
-                                with _tda(col_href[i], r):
+                                with tda(col_href[i], r):
                                     with div():
                                         if r < col_n_row[i]:
-                                            _img(src=col_content[i][r], width=imsize[0], height=imsize[1])
+                                            img_(src=col_content[i][r], width=imsize[0], height=imsize[1])
                                         if r < col_n_row[i+1]:
-                                            _img(src=col_content[i+1][r], cls='overlay', width=imsize[0], height=imsize[1])
+                                            img_(src=col_content[i+1][r], cls='overlay', width=imsize[0], height=imsize[1])
                             else:
                                 if r < col_n_row[i]:
-                                    _tda(col_href[i], r, _img(src=col_content[i][r], width=imsize[0], height=imsize[1]))
+                                    tda(col_href[i], r, img_(src=col_content[i][r], width=imsize[0], height=imsize[1]))
                                 else:
                                     td()
         if copyright:
-            with div(cls='copyright'):
-                text('Genereted by')
-                a('HTML4Vision', href='https://github.com/mtli/HTML4Vision')
-                from . import __version__
-                text(' v' + __version__)
-            
-        def getjs(filename):
-            import os
-            filedir = os.path.dirname(os.path.realpath(__file__))
-            jscode = open(os.path.join(filedir, filename)).read()
-            return jscode
-            
-        if match_col != None:
+            copyright_html()
+        
+        if match_col is not None:
             jscode = getjs('matchCol.js')
             jscode += '\nmatchCol(%d, %g);\n' % (match_col, imscale)
             script(text(jscode, escape=False))

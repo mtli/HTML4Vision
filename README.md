@@ -10,6 +10,7 @@ A simple HTML visualization tool for computer vision research
 - Handy [formatting controls](#formatting) to make pretty figures
 - [Web publishing](#web-publishing) for remote browsering
 - [Interactive tables](#interactive-tables), able to **sort** and toggle display states
+- [Tile images](#Tile-images) with optional captions and hyperlinks
 
 ## Installation
 ```
@@ -155,3 +156,26 @@ Example: `examples/overlay.py`
 The `href` field is designed to create a clickable link for table items. All column types support `href` as long as the column content is non-empty. It works in the same way as the `content` field of `img` columns &mdash; it will synergize with `subset` selection and the `pathrep` argument if specified (see [here](#search-path-and-publish-path)). For overlay columns, `href` should be attached to the preceding `img` column and it cannot be used together with `overlay_toggle=True` since they both bind to the mouse click.
 
 Example: `examples/href.py`
+
+
+## Tile images
+In addition to the main function `imagetable`, we provide another function to generate a grid display of a list of images: `imagetile`. The layout is specified through `n_col`, which means each row has items no more than `n_col`. The number of rows is calculated automatically. Optionally, you can add captions and URLs to the images.
+
+
+Basic syntax:
+```python
+imagetile(
+    # contents
+    content, n_col=3, out_file='index.html', title='',
+    # additional contents
+    caption=None, href=None, subset=None, copyright=True,
+    # modifiers
+    pathrep=None,
+    # style
+    imsize=None, imscale=1, caption_bottom=True, style=None,
+)
+```
+
+Most arguments bear the same meaning as in `imagetable`.
+
+Example: `examples/tile.py`
