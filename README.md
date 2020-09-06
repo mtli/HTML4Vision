@@ -179,3 +179,7 @@ imagetile(
 Most arguments bear the same meaning as in `imagetable`.
 
 Example: `examples/tile.py`
+
+
+## Integrated example
+For an integrated example of how HTML4Vision is used in practice, you can check out the [sAP repo](https://github.com/mtli/sAP/blob/master/doc/tasks.md#web-display).
