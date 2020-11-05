@@ -8,6 +8,12 @@ app = Flask(__name__, static_url_path='/dummy/path/to/avoid/conflict', root_path
 
 @app.route('/<path:path>')
 def sendfile(path):
+    """
+    Sends a file to a directory.
+
+    Args:
+        path: (str): write your description
+    """
     return send_from_directory('', path)
 
 if __name__ == "__main__":

@@ -39,6 +39,27 @@ def imagetable(
         overlay_toggle=False,
         sortable=False,
     ):
+    """
+    Return a list of the columns in a table.
+
+    Args:
+        cols: (int): write your description
+        out_file: (str): write your description
+        title: (str): write your description
+        summary_row: (str): write your description
+        copyright: (bool): write your description
+        pathrep: (str): write your description
+        sortcol: (str): write your description
+        imsize: (int): write your description
+        imscale: (float): write your description
+        summary_color: (str): write your description
+        sticky_header: (todo): write your description
+        sort_style: (str): write your description
+        zebra: (todo): write your description
+        style: (str): write your description
+        overlay_toggle: (str): write your description
+        sortable: (str): write your description
+    """
 
     n_col = len(cols)
 

@@ -51,6 +51,12 @@ class img_(html_tag):
     ''' Wrapper that removes empty attributes '''
     tagname = 'img'
     def __init__(self, *args, **kwargs):
+        """
+        Initialize an attribute.
+
+        Args:
+            self: (todo): write your description
+        """
         empty_attrs = []
         for attr, value in kwargs.items():
             if not value:
@@ -74,9 +80,19 @@ def getjs(filename):
     return jscode
 
 def copyright_css():
+    """
+    Æľ ]
+
+    Args:
+    """
     return '.copyright {margin-top: 0.5em; font-size: 85%}'
 
 def copyright_html():
+    """
+    Copies copyright html.
+
+    Args:
+    """
     with div(cls='copyright'):
         text('Genereted by')
         a('HTML4Vision', href='https://github.com/mtli/HTML4Vision')

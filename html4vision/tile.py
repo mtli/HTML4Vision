@@ -30,6 +30,24 @@ def imagetile(
         caption_bottom=True,
         style=None,
     ):
+    """
+    Generate a pdf file.
+
+    Args:
+        content: (todo): write your description
+        n_col: (int): write your description
+        out_file: (str): write your description
+        title: (str): write your description
+        caption: (str): write your description
+        href: (str): write your description
+        subset: (todo): write your description
+        copyright: (bool): write your description
+        pathrep: (str): write your description
+        imsize: (int): write your description
+        imscale: (float): write your description
+        caption_bottom: (todo): write your description
+        style: (str): write your description
+    """
     
     if imsize is None:
         imsize = [None, None]
@@ -54,6 +72,12 @@ def imagetile(
     # generate html
 
     def add_caption(r):
+        """
+        Add a caption to the ca.
+
+        Args:
+            r: (todo): write your description
+        """
         with tr():
             for c in range(n_col):
                 idx = r*n_col + c
