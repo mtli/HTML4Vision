@@ -8,12 +8,11 @@ from dominate.tags import *
 from dominate.util import text
 
 from .common import *
-
+from .thumbs import *
 
 Col = namedtuple('Col', 'type, name, content, subset, style, href')
 Col.__new__.__defaults__ = ('img',) + (None,) * (len(Col._fields) - 1)
-
-
+    
 def imagetable(
         # contents
         cols,
@@ -21,14 +20,17 @@ def imagetable(
         title='',
         summary_row=None,
         copyright=True,
-
+        thumbs_dir=None,
+        
         # modifiers
         pathrep=None,
         sortcol=None,
-
+        precompute_thumbs=False,
+        
         # style
         imsize=None,
         imscale=1,
+        preserve_aspect=False,
         summary_color=None,
         sticky_header=False,
         sort_style=None,
@@ -39,6 +41,32 @@ def imagetable(
         overlay_toggle=False,
         sortable=False,
     ):
+
+    thumbnail_generators = []
+    if precompute_thumbs and imsize is None and imscale == 1:
+        precompute_thumbs = False
+        
+    if precompute_thumbs:
+        if thumbs_dir is None:
+            thumbs_dir = os.path.splitext(out_file)[0] + '_thumbs'
+        os.makedirs(thumbs_dir, exist_ok=True)
+        if isinstance(imsize, tuple):
+            imsizes = [imsize for col in cols]
+        elif isinstance(imsize, list):
+            imsizes = imsize
+        elif hasattr(imsize, 'real'):
+            raise NotImplementedError('cannot use a single integer index for imsize with precompute_thumbs=True')
+        elif imsize is None:
+            imsizes = [None for col in cols]
+        else:
+            raise ValueError('unknown imsize format: please see documentation')
+        thumbnail_generators = [ThumbnailGenerator(thumbs_dir, imsizes[i], imscale, preserve_aspect) for i in range(len(cols))]
+        
+    def thumb(filename, i):
+        if not precompute_thumbs:
+            return filename
+        else:
+            return thumbnail_generators[i].make_thumb(filename)
 
     n_col = len(cols)
 
@@ -223,7 +251,8 @@ def imagetable(
                                             img_(src=col_content[i+1][r], cls='overlay', width=imsize[0], height=imsize[1])
                             else:
                                 if r < col_n_row[i]:
-                                    tda(col_href[i], r, img_(src=col_content[i][r], width=imsize[0], height=imsize[1]))
+                                    kw = {'width': imsize[0], 'height': imsize[1]} if not precompute_thumbs else {}
+                                    tda(col_href[i], r, a_(img_(src=thumb(col_content[i][r], i), **kw), href=col_content[i][r]))
                                 else:
                                     td()
         if copyright:
@@ -231,11 +260,11 @@ def imagetable(
         
         if match_col is not None:
             jscode = getjs('matchCol.js')
-            jscode += '\nmatchCol(%d, %g);\n' % (match_col, imscale)
+            jscode += '\nmatchCol(%d, %g);\n' % (match_col, imscale if not precompute_thumbs else 1.0)
             script(text(jscode, escape=False))
         elif imsize[0] == None and imscale != 1:
             jscode = getjs('scaleImg.js')
-            jscode += '\nscaleImg(%g);\n' % (imscale)
+            jscode += '\nscaleImg(%g);\n' % (imscale if not precompute_thumbs else 1.0)
             script(text(jscode, escape=False))
         if overlay_toggle:
             jscode = getjs('overlayToggle.js')
