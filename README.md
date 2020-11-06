@@ -113,7 +113,7 @@ The image size is controlled by `imsize`, `imscale`, and `preserve_aspect` argum
 
 `imscale` is a factor to scale the image. When used in combination with `imsize`, the `imscale` is applied after the effects of `imsize`.
 
-If `preserve_aspect` is `True` then the image aspect ratio will be preserved even if the size for `imsize` differs from the original image aspect ratio. In that case, the image will be resized so that the maximum image size matches `imsize`. This mode currently only is implemented for the case that `preserve_thumbs` is `True`.
+If `preserve_aspect` is `True` then the image aspect ratio will be preserved even if the size for `imsize` differs from the original image aspect ratio. In that case, the image will be resized so that the maximum image size matches `imsize`.
 
 ### Precomputed thumbnails
 

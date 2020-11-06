@@ -251,7 +251,12 @@ def imagetable(
                                             img_(src=col_content[i+1][r], cls='overlay', width=imsize[0], height=imsize[1])
                             else:
                                 if r < col_n_row[i]:
-                                    kw = {'width': imsize[0], 'height': imsize[1]} if not precompute_thumbs else {}
+                                    kw = {}
+                                    if not precompute_thumbs:
+                                        if not preserve_aspect:
+                                            kw = {'width': imsize[0], 'height': imsize[1]}
+                                        else:
+                                            kw = {'style': 'max-width:%dpx; max-height:%dpx; width:auto; height:auto;' % (imsize[0], imsize[1])}
                                     tda(col_href[i], r, a_(img_(src=thumb(col_content[i][r], i), **kw), href=col_content[i][r]))
                                 else:
                                     td()
