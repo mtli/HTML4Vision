@@ -26,6 +26,7 @@ def imagetable(
         pathrep=None,
         sortcol=None,
         precompute_thumbs=False,
+        thumb_quality=95,
         
         # style
         imsize=None,
@@ -60,7 +61,7 @@ def imagetable(
             imsizes = [None for col in cols]
         else:
             raise ValueError('unknown imsize format: please see documentation')
-        thumbnail_generators = [ThumbnailGenerator(thumbs_dir, imsizes[i], imscale, preserve_aspect) for i in range(len(cols))]
+        thumbnail_generators = [ThumbnailGenerator(thumbs_dir, imsizes[i], imscale, preserve_aspect, quality=thumb_quality) for i in range(len(cols))]
         
     def thumb(filename, i):
         if not precompute_thumbs:

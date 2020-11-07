@@ -3,11 +3,12 @@ from PIL import Image
 import os
 
 class ThumbnailGenerator:
-    def __init__(self, thumbs_dir, imsize, imscale, preserve_aspect):
+    def __init__(self, thumbs_dir, imsize, imscale, preserve_aspect, quality):
         self.thumbs_dir = thumbs_dir
         self.imsize = imsize
         self.imscale = imscale
         self.preserve_aspect = preserve_aspect
+        self.quality = quality
 
     def make_thumb(self, filename):
         thumb_filename = os.path.join(self.thumbs_dir, filename.replace(os.sep, '___'))
@@ -43,7 +44,7 @@ class ThumbnailGenerator:
             
             I = I.resize((w, h), Image.BILINEAR)
             
-            I.save(thumb_filename)
+            I.save(thumb_filename, quality=self.quality)
 
         return thumb_filename
 
