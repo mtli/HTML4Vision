@@ -59,6 +59,9 @@ class img_(html_tag):
             del kwargs[attr]
         super(img_, self).__init__(*args, **kwargs)
 
+class a_(html_tag):
+    tagname = 'a'
+
 def tda(hrefs, idx, *args, **kwargs):
     ''' Wrapper that adds an anchor tag on demand '''
     if hrefs and idx < len(hrefs) and hrefs[idx]:
