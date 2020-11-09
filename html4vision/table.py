@@ -1,4 +1,5 @@
 from __future__ import print_function
+import os
 from codecs import open
 
 from collections import namedtuple
@@ -50,7 +51,8 @@ def imagetable(
     if precompute_thumbs:
         if thumbs_dir is None:
             thumbs_dir = os.path.splitext(out_file)[0] + '_thumbs'
-        os.makedirs(thumbs_dir, exist_ok=True)
+        if not os.path.isdir(thumbs_dir):
+            os.makedirs(thumbs_dir)
         if isinstance(imsize, tuple):
             imsizes = [imsize for col in cols]
         elif isinstance(imsize, list):

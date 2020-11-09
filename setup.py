@@ -38,6 +38,7 @@ setup(
     install_requires=[
         'Flask',
         'dominate',
+        'Pillow',
     ],
     include_package_data = True,
 )
