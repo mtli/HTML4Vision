@@ -32,7 +32,7 @@ function matchCol(matchColId, scale) {
 			var row = table.rows[r];
 			var ele = row.cells[matchColId].firstElementChild;
 			if (!ele) continue;
-			if (ele.tagName === "DIV")
+			if (ele.tagName === "A")
 				ele = ele.firstElementChild;
 			if (!ele || ele.tagName !== "IMG") continue;
 			if (ele.complete || ele.naturalWidth > 0) {
