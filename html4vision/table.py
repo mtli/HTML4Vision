@@ -161,6 +161,8 @@ def imagetable(
     # generate html
     with dominate.document(title=title) as doc:
         with doc.head:
+            meta(charset='utf-8')
+
             if sort_style:
                 link(href=cdn_ts + 'css/theme.' \
                     + sort_style + '.min.css', rel='stylesheet')

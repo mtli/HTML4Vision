@@ -64,6 +64,8 @@ def imagetile(
 
     with dominate.document(title=title) as doc:
         with doc.head:
+            meta(charset='utf-8')
+            
             css = '' # custom CSS
             css += 'table.html4vision {text-align: center}\n'
             css += '.html4vision td {vertical-align: middle !important}\n'
