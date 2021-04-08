@@ -4,6 +4,8 @@ function matchCol(matchColId, scale) {
         for (var c = 0; c < row.cells.length; c++) {
             var ele = row.cells[c].firstElementChild;
 			if (!ele) continue;
+			if (ele.tagName === "A")
+				ele = ele.firstElementChild;
 			if (ele.tagName === "DIV")
 				ele.style.width = wStr;
                 ele.style.height = hStr;
@@ -32,7 +34,7 @@ function matchCol(matchColId, scale) {
 			var row = table.rows[r];
 			var ele = row.cells[matchColId].firstElementChild;
 			if (!ele) continue;
-			if (ele.tagName === "DIV")
+			if (ele.tagName === "DIV" || ele.tagName === "A")
 				ele = ele.firstElementChild;
 			if (!ele || ele.tagName !== "IMG") continue;
 			if (ele.complete || ele.naturalWidth > 0) {
