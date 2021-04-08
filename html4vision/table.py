@@ -129,6 +129,8 @@ def imagetable(
         
         if col.href:
             col_href[i] = parse_content(col.href, col.subset, pathrep, 'Col %d href' % i)
+        elif precompute_thumbs:
+            col_href[i] = col_content[i]
 
     n_row = max(col_n_row)
     match_col = col_idx_no_overlay[match_col] if match_col else match_col
@@ -262,7 +264,7 @@ def imagetable(
                                             kw = {'width': imsize[0], 'height': imsize[1]}
                                         else:
                                             kw = {'style': 'max-width:%dpx; max-height:%dpx; width:auto; height:auto;' % (imsize[0], imsize[1])}
-                                    tda(col_href[i], r, a_(img_(src=thumb(col_content[i][r], i), **kw), href=col_content[i][r]))
+                                    tda(col_href[i], r, img_(src=thumb(col_content[i][r], i), **kw))
                                 else:
                                     td()
         if copyright:
