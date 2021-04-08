@@ -123,6 +123,10 @@ If `precompute_thumbs` is set to `True` then thumbnail images are precomputed an
 
 Precomputed thumbnails will be generated with the same extension as images already have. In case the image extension is JPG, `thumb_quality` will control the JPEG compression quality.
 
+
+Example: `examples/auto_thumbs.py`
+
+
 ### Styling through CSS
 
 The benefit of an HTML table is the freedom to customize styles with CSS. Below is an example of setting the image border and box shadows, and highlighting a particular column.

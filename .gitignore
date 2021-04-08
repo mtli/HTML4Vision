@@ -111,3 +111,5 @@ nosync/
 tests/
 examples/*.html
 examples/another-dir/*.html
+examples/images/thumbs
+
