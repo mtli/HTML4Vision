@@ -11,7 +11,7 @@ class ThumbnailGenerator:
         self.quality = quality
 
     def make_thumb(self, filename):
-        thumb_filename = os.path.join(self.thumbs_dir, filename.replace(os.sep, '___'))
+        thumb_filename = os.path.join(self.thumbs_dir, os.path.splitdrive(filename)[1].replace(os.sep, '___'))
         thumb_ok = True
         st_filename = os.stat(filename)
         try:
