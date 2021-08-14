@@ -5,8 +5,4 @@ cols = [
     Col('model', 'Models', 'models/*.glb'),
 ]
 
-imagetable(
-    cols,
-    auto_rotate=True,
-    camera_controls=True
-)
+imagetable(cols, auto_rotate=True, camera_controls=True)
