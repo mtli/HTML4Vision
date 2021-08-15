@@ -213,7 +213,7 @@ Not only does this repo tiles images, but also 3D models! The rendering and cont
 </p>
 
 
-NOTE: you need to serve the generated HTML with a server to view the content (see #web-publishing). Directly opening the HTML file locally will yield cross-origin error (CROS).
+NOTE: you need to serve the generated HTML with a server to view the content (see [web publishing](#web-publishing)). Directly opening the HTML file locally will yield cross-origin error (CROS).
 
 Example: `examples/model.py`
 
