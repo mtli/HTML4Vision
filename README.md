@@ -10,7 +10,7 @@ A simple HTML visualization tool for computer vision research
 - Handy [formatting controls](#formatting) to make pretty figures
 - [Web publishing](#web-publishing) for remote browsering
 - [Interactive tables](#interactive-tables), able to **sort** and toggle display states
-- [Tile images](#Tile-images) with optional captions and hyperlinks
+- [Tile images](#tile-images) with optional captions and hyperlinks
 - [3D models](#3d-models) with camera controls
 
 ## Installation
@@ -72,6 +72,8 @@ imagetable(
     summary_color=None, sticky_header=False, sort_style=None, zebra=False, style=None,
     # interaction
     overlay_toggle=False, sortable=False,
+    # 3d model viewer
+    auto_rotate=False, camera_controls=False,
 )
 ```
 The only required argument is `cols`, which is a sequence of `Col` objects, specifying the content of the table. `out_file` optionally names the output file while `title` sets the title of the generated HTML page.
@@ -83,6 +85,7 @@ The meaning and format for other arguments can be found in respective sections
 - [sorting](#sorting): `sortcol`, `sortable`, `sticky_header`, `sort_style`, `zebra`, `summary_row` and `summary_color`.
 - [display toggle](#display-toggle): `overlay_toggle`.
 - [styling through CSS](#styling-through-CSS): `style`.
+- [3d models](#3d-models): `auto_rotate` and `camera_controls`.
 
 ## Web publishing
 
@@ -206,16 +209,16 @@ For an integrated example of how HTML4Vision is used in practice, you can check 
 Not only does this repo tiles images, but also 3D models! The rendering and control are supported through Google's [model-viewer](https://github.com/google/model-viewer). The 3d models used in the example below are also from model-viewer.
 
 <p align="center">
-    <img alt="3d_model_example" src="examples/model.png" width="600px">
+    <img alt="3d_model_example" src="examples/model.png" width="500px">
 </p>
 
 
-NOTE: you need to serve the generated HTML with a server to view the content (see #Web-publishing). Directly opening the HTML file locally will yield cross-origin error (CROS).
+NOTE: you need to serve the generated HTML with a server to view the content (see #web-publishing). Directly opening the HTML file locally will yield cross-origin error (CROS).
 
 Example: `examples/model.py`
 
 ## Contributions
 
-Any contributions are welcome! Below are noteworthy community contributions:
+Any contribution is welcome! Many thanks to these noteworthy community contributions:
 - connellybarnes: thumbnail generation
 - bertjiazheng: 3d model support
