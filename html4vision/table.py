@@ -39,13 +39,13 @@ def imagetable(
         zebra=False,
         style=None,
         
-        # 3d model viewer
-        auto_rotate=False,
-        camera_controls=False,
-
         # interaction
         overlay_toggle=False,
         sortable=False,
+
+        # 3d model viewer
+        auto_rotate=False,
+        camera_controls=False,
     ):
 
     thumbnail_generators = []

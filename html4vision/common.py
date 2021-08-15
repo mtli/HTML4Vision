@@ -62,9 +62,6 @@ class img_(html_tag):
 class model_(html_tag):
     tagname = 'model-viewer'
 
-class a_(html_tag):
-    tagname = 'a'
-
 def tda(hrefs, idx, *args, **kwargs):
     ''' Wrapper that adds an anchor tag on demand '''
     if hrefs and idx < len(hrefs) and hrefs[idx]:
