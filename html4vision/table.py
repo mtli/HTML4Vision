@@ -45,7 +45,7 @@ def imagetable(
 
         # 3d model viewer
         auto_rotate=False,
-        camera_controls=False,
+        camera_controls=True,
     ):
 
     thumbnail_generators = []
@@ -193,6 +193,7 @@ def imagetable(
                 script(text('$(function(){$(".tablesorter").tablesorter(' + ts_opts + ');});', escape=False))
             
             if use_model_viewer:
+                model_viewer_opts = {'auto-rotate': auto_rotate, 'camera-controls': camera_controls}
                 script(type="module", src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js")
 
             css = '' # custom CSS
@@ -260,9 +261,10 @@ def imagetable(
                                 else:
                                     td()
                             elif col.type == 'model':
-                                with td():
-                                    kw = {'auto-rotate': auto_rotate, 'camera-controls': camera_controls}
-                                    model_(src=col_content[i][r], **kw)
+                                if r < col_n_row[i]:
+                                    tda(col_href[i], r, model_(src=col_content[i][r], **model_viewer_opts))
+                                else:
+                                    td()
                             elif col.type == 'overlay':
                                 continue
                             elif col_pre_overlay[i]:
