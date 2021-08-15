@@ -39,7 +39,7 @@ def imagetable(
         zebra=False,
         style=None,
         
-        # model viewer
+        # 3d model viewer
         auto_rotate=False,
         camera_controls=False,
 
@@ -191,6 +191,7 @@ def imagetable(
                 if ts_opts:
                     ts_opts = '{\n' + ts_opts + '}'
                 script(text('$(function(){$(".tablesorter").tablesorter(' + ts_opts + ');});', escape=False))
+            
             if use_model_viewer:
                 script(type="module", src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js")
 
