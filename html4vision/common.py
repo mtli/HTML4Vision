@@ -59,6 +59,9 @@ class img_(html_tag):
             del kwargs[attr]
         super(img_, self).__init__(*args, **kwargs)
 
+class model_(html_tag):
+    tagname = 'model-viewer'
+
 class a_(html_tag):
     tagname = 'a'
 
@@ -69,7 +72,6 @@ def tda(hrefs, idx, *args, **kwargs):
     else:
         return td(*args, **kwargs)
 
-            
 def getjs(filename):
     ''' Read javascript '''
     filedir = os.path.dirname(os.path.realpath(__file__))

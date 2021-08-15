@@ -13,7 +13,7 @@ from .thumbs import *
 
 Col = namedtuple('Col', 'type, name, content, subset, style, href')
 Col.__new__.__defaults__ = ('img',) + (None,) * (len(Col._fields) - 1)
-    
+
 def imagetable(
         # contents
         cols,
@@ -38,6 +38,10 @@ def imagetable(
         sort_style=None,
         zebra=False,
         style=None,
+        
+        # model viewer
+        auto_rotate=False,
+        camera_controls=False,
 
         # interaction
         overlay_toggle=False,
@@ -99,6 +103,7 @@ def imagetable(
     col_n_row = [None]*n_col
 
     use_overlay = False
+    use_model_viewer = False
     col_pre_overlay = [False]*n_col
     col_idx_no_overlay = [None]*n_col
     col_idx = 0
@@ -124,9 +129,13 @@ def imagetable(
                    col_pre_overlay[i-1] = True
                    col_idx -= 1
                    col_idx_no_overlay[i] -= 1
+        elif col.type == 'model':
+            use_model_viewer = True
+            col_content[i] = parse_content(col.content, col.subset, pathrep, 'Col %d' % i)
+            col_n_row[i] = len(col_content[i])
         else:
             raise ValueError('Col %d: unrecognized column type "%s"' % (i, col.type))
-        
+
         if col.href:
             col_href[i] = parse_content(col.href, col.subset, pathrep, 'Col %d href' % i)
         elif precompute_thumbs:
@@ -182,6 +191,8 @@ def imagetable(
                 if ts_opts:
                     ts_opts = '{\n' + ts_opts + '}'
                 script(text('$(function(){$(".tablesorter").tablesorter(' + ts_opts + ');});', escape=False))
+            if use_model_viewer:
+                script(type="module", src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js")
 
             css = '' # custom CSS
             css += 'table.html4vision {text-align: center}\n'
@@ -247,6 +258,10 @@ def imagetable(
                                     tda(col_href[i], r, col_content[i][r])
                                 else:
                                     td()
+                            elif col.type == 'model':
+                                with td():
+                                    kw = {'auto-rotate': auto_rotate, 'camera-controls': camera_controls}
+                                    model_(src=col_content[i][r], **kw)
                             elif col.type == 'overlay':
                                 continue
                             elif col_pre_overlay[i]:
