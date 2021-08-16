@@ -79,7 +79,7 @@ imagetable(
 The only required argument is `cols`, which is a sequence of `Col` objects, specifying the content of the table. `out_file` optionally names the output file while `title` sets the title of the generated HTML page.
 
 The meaning and format for other arguments can be found in respective sections
-- [generating the HMTL file to another folder](#search-path-and-publish-path): `pathrep`.
+- [generating the HTML file to another folder](#search-path-and-publish-path): `pathrep`.
 - [size control](#size-control): `imsize`, `imscale`, `preserve_aspect`.
 - [precomputed thumbnails](#precomputed-thumbnails): `thumbs_dir`, `precompute_thumbs`, `thumb_quality`.
 - [sorting](#sorting): `sortcol`, `sortable`, `sticky_header`, `sort_style`, `zebra`, `summary_row` and `summary_color`.
@@ -89,9 +89,9 @@ The meaning and format for other arguments can be found in respective sections
 
 ## Web publishing
 
-Web publishing is designed for sharing the visualized results. Typically it can be used for sharing the results with others or viewing the results on a remote compute node without downloading them in advance. Of course, it can also be used as a general purpose HTTP server.
+Web publishing is designed for sharing the visualized results. Typically, it can be used for sharing the results with others or viewing the results on a remote compute node without downloading them in advance. Of course, it can also be used as a general purpose HTTP server.
 
-The script provided here is functionally similar to the `SimpleHTTPServer` in Python 2 and serves the files in the current directory. It supports both Python 2 & 3 and uses mutiple threads for a much better web experience. For security reasons, directory browsing is disabled and accessing files outside of the current directory is not allowed. So you need to type in the exact HTML file name (e.g. `http://127.0.0.1:6096/index.html`) to access.
+The script provided here is functionally similar to the `SimpleHTTPServer` in Python 2 and serves the files in the current directory. It supports both Python 2 & 3 and uses multiple threads for a much better web experience. For security reasons, directory browsing is disabled and accessing files outside of the current directory is not allowed. So you need to type in the exact HTML file name (e.g. `http://127.0.0.1:6096/index.html`) to access.
 
 Change the current directory to the directory you want to serve and run
 ```
@@ -111,9 +111,9 @@ Example: `examples/pathrep.py`
 
 ### Size control
 
-The image size is controlled by `imsize`, `imscale`, and `preserve_aspect` arguments. Note that all scaling is done through Javascript which takes place after the content of the webpage is loaded.
+The image size is controlled by `imsize`, `imscale`, and `preserve_aspect` arguments. Note that all scaling is done through JavaScript which takes place after the content of the webpage is loaded.
 
-`imsize` can be either a single index or a `tuple` or a `list` of width and height. If it is a single index, it means scaling the images in all other columns to match the corresponding image in the column specified by the index. The index is zero-based and refers to the items in the list of `Col` objects. Understanding the indexing is important when you also use image overlay where two objects describe a single column. For example, you can scale the intermediate feature maps of a convolutional nerual network (CNN) to match the size of the input image. If `imsize` is a `tuple` or a `list` of width and height, then all images will be scaled to that size.
+`imsize` can be either a single index or a `tuple` or a `list` of width and height. If it is a single index, it means scaling the images in all other columns to match the corresponding image in the column specified by the index. The index is zero-based and refers to the items in the list of `Col` objects. Understanding the indexing is important when you also use image overlay where two objects describe a single column. For example, you can scale the intermediate feature maps of a convolutional neural network (CNN) to match the size of the input image. If `imsize` is a `tuple` or a `list` of width and height, then all images will be scaled to that size.
 
 `imscale` is a factor to scale the image. When used in combination with `imsize`, the `imscale` is applied after the effects of `imsize`.
 
@@ -121,7 +121,7 @@ If `preserve_aspect` is `True` then the image aspect ratio will be preserved eve
 
 ### Precomputed thumbnails
 
-The default thumbnail previews are based on using Javascript to resize down the image inside the browser. However, if the amount of image data is too much then this mode can become prohibitively slow or even crash in the browser, due to the system memory resources being exhausted.
+The default thumbnail previews are based on using JavaScript to resize down the image inside the browser. However, if the amount of image data is too much then this mode can become prohibitively slow or even crash in the browser, due to the system memory resources being exhausted.
 
 If `precompute_thumbs` is set to `True` then thumbnail images are precomputed and stored alongside the HTML file. This allows the memory requirements in the browser to be greatly reduced. By default, a thumbnail directory name is automatically generated by appending `thumbs` to the name provided for `out_file`, however, `thumbs_dir` can be used to specify the thumbnail directory explicitly. Thumbnail generation is also cached using the modification times returned by the system's `os.stat()` function, so the slow thumbnail generation need not be re-run if thumbnails have already been computed in a previous run of the script.
 
@@ -220,5 +220,5 @@ Example: `examples/model.py`
 ## Contributions
 
 Any contribution is welcome! Many thanks to these noteworthy community contributions:
-- connellybarnes: thumbnail generation
-- bertjiazheng: 3d model support
+- [connellybarnes](https://github.com/connellybarnes): thumbnail generation
+- [bertjiazheng](http://github.com/bertjiazheng): 3d model support
