@@ -3,7 +3,7 @@ from glob import glob
 from dominate.tags import *
 from dominate.util import text
 
-   
+
 def subsetsel(content, subset):
     ''' Subset selection for various syntaxes '''
     if subset is None:
@@ -84,3 +84,9 @@ def copyright_html():
         a('HTML4Vision', href='https://github.com/mtli/HTML4Vision')
         from . import __version__
         text(' v' + __version__)
+
+def get_imsize_attrs(imsize, preserve_aspect):
+    if not preserve_aspect:
+        return {'width': imsize[0], 'height': imsize[1]}
+    else:
+        return {'style': 'max-width:%dpx; max-height:%dpx;' % (imsize[0], imsize[1])}

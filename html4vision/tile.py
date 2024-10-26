@@ -27,6 +27,7 @@ def imagetile(
         # style
         imsize=None,
         imscale=1,
+        preserve_aspect=True,
         caption_bottom=True,
         style=None,
     ):
@@ -87,7 +88,8 @@ def imagetile(
                         for c in range(n_col):
                             idx = r*n_col + c
                             if idx < n_item:
-                                tda(href, idx, img_(src=items[idx], width=imsize[0], height=imsize[1]))
+                                kw = get_imsize_attrs(imsize, preserve_aspect)
+                                tda(href, idx, img_(src=items[idx], **kw))
                             else:
                                 td()
                     if use_caption and caption_bottom:
