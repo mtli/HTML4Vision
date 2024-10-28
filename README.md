@@ -119,6 +119,8 @@ The image size is controlled by `imsize`, `imscale`, and `preserve_aspect` argum
 
 If `preserve_aspect` is `True` then the image aspect ratio will be preserved even if the size for `imsize` differs from the original image aspect ratio. In that case, the image will be resized so that the maximum image size matches `imsize`.
 
+Image alignment is controlled by `hori_center_img`. If `True`, all images will be horizontally centered.
+
 ### Precomputed thumbnails
 
 The default thumbnail previews are based on using JavaScript to resize down the image inside the browser. However, if the amount of image data is too much then this mode can become prohibitively slow or even crash in the browser, due to the system memory resources being exhausted.

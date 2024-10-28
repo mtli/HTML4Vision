@@ -33,6 +33,7 @@ def imagetable(
         imsize=None,
         imscale=1,
         preserve_aspect=False,
+        hori_center_img=False,
         summary_color=None,
         sticky_header=False,
         sort_style=None,
@@ -199,7 +200,10 @@ def imagetable(
             css = '' # custom CSS
             css += 'table.html4vision {text-align: center}\n'
             css += '.html4vision td {vertical-align: middle !important}\n'
-            css += '.html4vision td img {display: table-cell}\n'
+            if hori_center_img:
+                css += '.html4vision td img {display: block; margin: auto}\n'
+            else:
+                css += '.html4vision td img {display: table-cell}\n'
             if copyright:
                 css += copyright_css()
 
