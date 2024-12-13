@@ -47,6 +47,7 @@ def imagetable(
         # 3d model viewer
         auto_rotate=False,
         camera_controls=True,
+        mesh_opt=False,
     ):
 
     thumbnail_generators = []
@@ -195,6 +196,11 @@ def imagetable(
             
             if use_model_viewer:
                 model_viewer_opts = {'auto-rotate': auto_rotate, 'camera-controls': camera_controls}
+                if mesh_opt:
+                        script(text("""
+                            self.ModelViewerElement = self.ModelViewerElement || {};
+                            self.ModelViewerElement.meshoptDecoderLocation = 'https://cdn.jsdelivr.net/npm/meshoptimizer/meshopt_decoder.js';
+                        """, escape=False))
                 script(type="module", src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js")
 
             css = '' # custom CSS

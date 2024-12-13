@@ -73,7 +73,7 @@ imagetable(
     # interaction
     overlay_toggle=False, sortable=False,
     # 3d model viewer
-    auto_rotate=False, camera_controls=True,
+    auto_rotate=False, camera_controls=True, mesh_opt=False,
 )
 ```
 The only required argument is `cols`, which is a sequence of `Col` objects, specifying the content of the table. `out_file` optionally names the output file while `title` sets the title of the generated HTML page.
@@ -85,7 +85,7 @@ The meaning and format for other arguments can be found in respective sections
 - [sorting](#sorting): `sortcol`, `sortable`, `sticky_header`, `sort_style`, `zebra`, `summary_row` and `summary_color`.
 - [display toggle](#display-toggle): `overlay_toggle`.
 - [styling through CSS](#styling-through-CSS): `style`.
-- [3d models](#3d-models): `auto_rotate` and `camera_controls`.
+- [3d models](#3d-models): `auto_rotate`, `camera_controls` and `mesh_opt`.
 
 ## Web publishing
 
@@ -214,6 +214,7 @@ Not only does this repo tiles images, but also 3D models! The rendering and cont
     <img alt="3d_model_example" src="examples/model.png" width="500px">
 </p>
 
+For glb meshes optimized with the `EXT_meshopt_compression` extension, enable `mesh_opt=True`. For more details about meshopt, see the [model-viewer meshoptSupport documentation](https://modelviewer.dev/examples/loading/#meshoptSupport).
 
 NOTE: you need to serve the generated HTML with a server to view the content (see [web publishing](#web-publishing)). Directly opening the HTML file locally will yield cross-origin error (CROS).
 
