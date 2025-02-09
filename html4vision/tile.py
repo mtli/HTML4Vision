@@ -2,7 +2,6 @@ from __future__ import print_function
 from codecs import open
 
 from math import ceil
-from glob import glob
 
 import dominate
 from dominate.tags import *
@@ -10,32 +9,36 @@ from dominate.util import text
 
 from .common import *
 
+
 def imagetile(
-        # contents
-        content,
-        n_col=3,
-        out_file='index.html',
-        title='',
-        caption=None,
-        href=None,
-        subset=None,
-        copyright=True,
+    # contents
+    content,
+    n_col=3,
+    out_file='index.html',
+    title='',
+    caption=None,
+    href=None,
+    subset=None,
+    copyright=True,
 
-        # modifiers
-        pathrep=None,
+    # modifiers
+    pathrep=None,
 
-        # style
-        imsize=None,
-        imscale=1,
-        preserve_aspect=True,
-        caption_bottom=True,
-        style=None,
-    ):
-    
+    # style
+    imsize=None,
+    imscale=1,
+    preserve_aspect=True,
+    caption_bottom=True,
+    style=None,
+):
+
     if imsize is None:
         imsize = [None, None]
     else:
-        if not((isinstance(imsize, list) or type(imsize) is tuple) and len(imsize) == 2 and imsize[0] > 0 and imsize[1] > 0):
+        if not (
+            (isinstance(imsize, list) or type(imsize) is tuple)
+            and len(imsize) == 2 and imsize[0] > 0 and imsize[1] > 0
+        ):
             raise ValueError('"imsize" needs to be a column index, or a list/tuple of size 2 specifying the width and the height')
         if imscale != 1:
             imsize = (imsize[0]*imscale, imsize[1]*imscale)
@@ -50,9 +53,8 @@ def imagetile(
         caption = subsetsel(caption, subset)
     if href is not None:
         href = parse_content(href, subset, pathrep, 'tile href')
-    
+
     n_row = ceil(float(n_item) / n_col)
-    # generate html
 
     def add_caption(r):
         with tr():
@@ -67,7 +69,7 @@ def imagetile(
         with doc.head:
             meta(charset='utf-8')
             
-            css = '' # custom CSS
+            css = ''
             css += 'table.html4vision {text-align: center}\n'
             css += '.html4vision td {vertical-align: middle !important}\n'
             css += '.html4vision td img {display: block; margin: auto;}\n'
@@ -100,8 +102,8 @@ def imagetile(
 
         if copyright:
             copyright_html()
-            
-        if imsize[0] == None and imscale != 1:
+
+        if imsize[0] is None and imscale != 1:
             jscode = getjs('scaleImg.js')
             jscode += '\nscaleImg(%g);\n' % (imscale)
             script(text(jscode, escape=False))

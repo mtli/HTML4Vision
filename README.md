@@ -68,7 +68,7 @@ imagetable(
     # modifiers
     pathrep=None, sortcol=None, precompute_thumbs=False, thumb_quality=95,
     # style
-    imsize=None, imscale=1, preserve_aspect=False,
+    imsize=None, imscale=1, preserve_aspect=True, hori_center_img=False,
     summary_color=None, sticky_header=False, sort_style=None, zebra=False, style=None,
     # interaction
     overlay_toggle=False, sortable=False,
@@ -80,7 +80,7 @@ The only required argument is `cols`, which is a sequence of `Col` objects, spec
 
 The meaning and format for other arguments can be found in respective sections
 - [generating the HTML file to another folder](#search-path-and-publish-path): `pathrep`.
-- [size control](#size-control): `imsize`, `imscale`, `preserve_aspect`.
+- [size control](#size-control): `imsize`, `imscale`, `preserve_aspect`, `hori_center_img`.
 - [precomputed thumbnails](#precomputed-thumbnails): `thumbs_dir`, `precompute_thumbs`, `thumb_quality`.
 - [sorting](#sorting): `sortcol`, `sortable`, `sticky_header`, `sort_style`, `zebra`, `summary_row` and `summary_color`.
 - [display toggle](#display-toggle): `overlay_toggle`.
@@ -119,7 +119,8 @@ The image size is controlled by `imsize`, `imscale`, and `preserve_aspect` argum
 
 If `preserve_aspect` is `True` then the image aspect ratio will be preserved even if the size for `imsize` differs from the original image aspect ratio. In that case, the image will be resized so that the maximum image size matches `imsize`.
 
-Image alignment is controlled by `hori_center_img`. If `True`, all images will be horizontally centered.
+Additionally, image alignment is controlled by `hori_center_img`. If `True`, all
+images will be horizontally centered.
 
 ### Precomputed thumbnails
 

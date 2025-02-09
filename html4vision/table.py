@@ -15,40 +15,40 @@ Col = namedtuple('Col', 'type, name, content, subset, style, href')
 Col.__new__.__defaults__ = ('img',) + (None,) * (len(Col._fields) - 1)
 
 def imagetable(
-        # contents
-        cols,
-        out_file='index.html',
-        title='',
-        summary_row=None,
-        copyright=True,
-        thumbs_dir=None,
-        
-        # modifiers
-        pathrep=None,
-        sortcol=None,
-        precompute_thumbs=False,
-        thumb_quality=95,
-        
-        # style
-        imsize=None,
-        imscale=1,
-        preserve_aspect=False,
-        hori_center_img=False,
-        summary_color=None,
-        sticky_header=False,
-        sort_style=None,
-        zebra=False,
-        style=None,
-        
-        # interaction
-        overlay_toggle=False,
-        sortable=False,
+    # contents
+    cols,
+    out_file='index.html',
+    title='',
+    summary_row=None,
+    copyright=True,
+    thumbs_dir=None,
+    
+    # modifiers
+    pathrep=None,
+    sortcol=None,
+    precompute_thumbs=False,
+    thumb_quality=95,
+    
+    # style
+    imsize=None,
+    imscale=1,
+    preserve_aspect=True,
+    hori_center_img=False,
+    summary_color=None,
+    sticky_header=False,
+    sort_style=None,
+    zebra=False,
+    style=None,
+    
+    # interaction
+    overlay_toggle=False,
+    sortable=False,
 
-        # 3d model viewer
-        auto_rotate=False,
-        camera_controls=True,
-        mesh_opt=False,
-    ):
+    # 3d model viewer
+    auto_rotate=False,
+    camera_controls=True,
+    mesh_opt=False,
+):
 
     thumbnail_generators = []
     if precompute_thumbs and imsize is None and imscale == 1:
