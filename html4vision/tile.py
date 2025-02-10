@@ -3,11 +3,20 @@ from codecs import open
 
 from math import ceil
 
-import dominate
-from dominate.tags import *
-from dominate.util import text
+import dominate  # type: ignore
+from dominate.tags import meta, script, table, tbody, tr, td  # type: ignore
+from dominate.util import text  # type: ignore
 
-from .common import *
+from .common import (
+    copyright_html,
+    getjs,
+    get_imsize_attrs,
+    img_,
+    parse_pathrep,
+    parse_content,
+    subsetsel,
+    tda,
+)
 
 
 def imagetile(
@@ -32,7 +41,6 @@ def imagetile(
     caption_bottom=True,
     style=None,
 ):
-
     if imsize is None:
         imsize = [None, None]
     else:
@@ -40,7 +48,10 @@ def imagetile(
             (isinstance(imsize, list) or type(imsize) is tuple)
             and len(imsize) == 2 and imsize[0] > 0 and imsize[1] > 0
         ):
-            raise ValueError('"imsize" needs to be a column index, or a list/tuple of size 2 specifying the width and the height')
+            raise ValueError(
+                '"imsize" needs to be a column index, or a list/tuple of size 2 specifying '
+                'the width and the height'
+            )
         if imscale != 1:
             imsize = (imsize[0]*imscale, imsize[1]*imscale)
 
@@ -69,7 +80,7 @@ def imagetile(
     with dominate.document(title=title) as doc:
         with doc.head:
             meta(charset='utf-8')
-            
+
             css = ''
             css += 'table.html4vision {text-align: center}\n'
             css += '.html4vision td {vertical-align: middle !important}\n'

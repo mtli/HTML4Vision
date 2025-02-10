@@ -1,16 +1,17 @@
 import os
 from glob import glob
-from dominate.tags import *
-from dominate.util import text
+
+from dominate.tags import html_tag, td, a, div  # type: ignore
+from dominate.util import text  # type: ignore
 
 
 def subsetsel(content, subset):
-    ''' Subset selection for various syntaxes '''
+    """Subset selection for various syntaxes"""
     if subset is None:
         return content
     if isinstance(subset, int):
         return content[:subset]
-    if type(subset) is tuple: # namedtuple is not allowed here
+    if type(subset) is tuple:  # namedtuple is not allowed here
         if len(subset) == 2:
             return content[subset[0]:subset[1]]
         elif len(subset) == 3:
@@ -19,8 +20,9 @@ def subsetsel(content, subset):
         return [content[i] for i in subset]
     raise ValueError('Unrecognized subset value')
 
+
 def parse_pathrep(pathrep):
-    ''' Parse path replacer '''
+    """Parse path replacer"""
     if pathrep is None:
         return None
     if type(pathrep) is tuple or isinstance(pathrep, list):
@@ -31,8 +33,9 @@ def parse_pathrep(pathrep):
         pathrep_new = ''
     return (pathrep_old, pathrep_new)
 
+
 def parse_content(descriptor, subset=None, pathrep=None, message=None):
-    ''' Parse content descriptor '''
+    """ Parse content descriptor """
     if isinstance(descriptor, list):
         out = descriptor
     elif isinstance(descriptor, str):
@@ -47,9 +50,11 @@ def parse_content(descriptor, subset=None, pathrep=None, message=None):
         out = [s.replace('\\', '/').replace(pathrep[0], pathrep[1]) for s in out]
     return out
 
+
 class img_(html_tag):
-    ''' Wrapper that removes empty attributes '''
+    """Wrapper that removes empty attributes"""
     tagname = 'img'
+
     def __init__(self, *args, **kwargs):
         empty_attrs = []
         for attr, value in kwargs.items():
@@ -59,24 +64,29 @@ class img_(html_tag):
             del kwargs[attr]
         super(img_, self).__init__(*args, **kwargs)
 
+
 class model_(html_tag):
     tagname = 'model-viewer'
 
+
 def tda(hrefs, idx, *args, **kwargs):
-    ''' Wrapper that adds an anchor tag on demand '''
+    """ Wrapper that adds an anchor tag on demand """
     if hrefs and idx < len(hrefs) and hrefs[idx]:
         return td(**kwargs).add(a(*args, href=hrefs[idx], target='_blank'))
     else:
         return td(*args, **kwargs)
 
+
 def getjs(filename):
-    ''' Read javascript '''
+    """Read javascript"""
     filedir = os.path.dirname(os.path.realpath(__file__))
     jscode = open(os.path.join(filedir, filename)).read()
     return jscode
 
+
 def copyright_css():
     return '.copyright {margin-top: 0.5em; font-size: 85%}'
+
 
 def copyright_html():
     with div(cls='copyright'):
@@ -84,6 +94,7 @@ def copyright_html():
         a('HTML4Vision', href='https://github.com/mtli/HTML4Vision')
         from . import __version__
         text(' v' + __version__)
+
 
 def get_imsize_attrs(imsize, preserve_aspect):
     if not preserve_aspect:
