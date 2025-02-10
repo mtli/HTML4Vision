@@ -23,6 +23,7 @@ def imagetile(
 
     # modifiers
     pathrep=None,
+    inline_js=None,
 
     # style
     imsize=None,
@@ -108,6 +109,8 @@ def imagetile(
             jscode += '\nscaleImg(%g);\n' % (imscale)
             script(text(jscode, escape=False))
 
+        if inline_js:
+            script(text(inline_js, escape=False))
 
     with open(out_file, 'w', encoding='utf-8') as f:
         f.write(doc.render())

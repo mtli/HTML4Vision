@@ -14,6 +14,7 @@ from .thumbs import *
 Col = namedtuple('Col', 'type, name, content, subset, style, href')
 Col.__new__.__defaults__ = ('img',) + (None,) * (len(Col._fields) - 1)
 
+
 def imagetable(
     # contents
     cols,
@@ -22,13 +23,14 @@ def imagetable(
     summary_row=None,
     copyright=True,
     thumbs_dir=None,
-    
+
     # modifiers
     pathrep=None,
     sortcol=None,
     precompute_thumbs=False,
     thumb_quality=95,
-    
+    inline_js=None,
+
     # style
     imsize=None,
     imscale=1,
@@ -39,7 +41,7 @@ def imagetable(
     sort_style=None,
     zebra=False,
     style=None,
-    
+
     # interaction
     overlay_toggle=False,
     sortable=False,
@@ -53,7 +55,7 @@ def imagetable(
     thumbnail_generators = []
     if precompute_thumbs and imsize is None and imscale == 1:
         precompute_thumbs = False
-        
+ 
     if precompute_thumbs:
         if thumbs_dir is None:
             thumbs_dir = os.path.splitext(out_file)[0] + '_thumbs'
@@ -70,7 +72,7 @@ def imagetable(
         else:
             raise ValueError('unknown imsize format: please see documentation')
         thumbnail_generators = [ThumbnailGenerator(thumbs_dir, imsizes[i], imscale, preserve_aspect, quality=thumb_quality) for i in range(len(cols))]
-        
+
     def thumb(filename, i):
         if not precompute_thumbs:
             return filename
@@ -193,7 +195,7 @@ def imagetable(
                 if ts_opts:
                     ts_opts = '{\n' + ts_opts + '}'
                 script(text('$(function(){$(".tablesorter").tablesorter(' + ts_opts + ');});', escape=False))
-            
+
             if use_model_viewer:
                 model_viewer_opts = {'auto-rotate': auto_rotate, 'camera-controls': camera_controls}
                 if mesh_opt:
@@ -295,7 +297,7 @@ def imagetable(
                                     td()
         if copyright:
             copyright_html()
-        
+
         if match_col is not None:
             jscode = getjs('matchCol.js')
             jscode += '\nmatchCol(%d, %g);\n' % (match_col, imscale if not precompute_thumbs else 1.0)
@@ -307,6 +309,8 @@ def imagetable(
         if overlay_toggle:
             jscode = getjs('overlayToggle.js')
             script(text(jscode, escape=False))
+        if inline_js:
+            script(text(inline_js, escape=False))
 
     with open(out_file, 'w', encoding='utf-8') as f:
         f.write(doc.render())

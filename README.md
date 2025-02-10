@@ -66,7 +66,7 @@ imagetable(
     # additional contents
     summary_row=None, copyright=True,
     # modifiers
-    pathrep=None, sortcol=None, precompute_thumbs=False, thumb_quality=95,
+    pathrep=None, sortcol=None, precompute_thumbs=False, thumb_quality=95, inline_js=None,
     # style
     imsize=None, imscale=1, preserve_aspect=True, hori_center_img=False,
     summary_color=None, sticky_header=False, sort_style=None, zebra=False, style=None,
@@ -85,6 +85,7 @@ The meaning and format for other arguments can be found in respective sections
 - [sorting](#sorting): `sortcol`, `sortable`, `sticky_header`, `sort_style`, `zebra`, `summary_row` and `summary_color`.
 - [display toggle](#display-toggle): `overlay_toggle`.
 - [styling through CSS](#styling-through-CSS): `style`.
+- [advanced content modification](#advanced-content-modification): `inline_js`.
 - [3d models](#3d-models): `auto_rotate`, `camera_controls` and `mesh_opt`.
 
 ## Web publishing
@@ -156,6 +157,15 @@ Two consecutive `Col` objects form a single image column. The first `Col` object
 
 Example: `examples/overlay.py`
 
+### Advanced content modification
+
+You can insert custom JavaScript code to modify the content of the table after the page loads. For example, you can merge cells to enable a compact comparison among experiments.
+
+<p align="center">
+    <img alt="merge_cells_example" src="examples/merge_cells.png" style="max-width: 700px;">
+</p>
+
+Example: `examples/merge_cells.py`
 
 ## Interactive tables
 
@@ -193,7 +203,7 @@ imagetile(
     # additional contents
     caption=None, href=None, subset=None, copyright=True,
     # modifiers
-    pathrep=None,
+    pathrep=None, inline_js=None,
     # style
     imsize=None, imscale=1, caption_bottom=True, style=None,
 )
@@ -202,7 +212,6 @@ imagetile(
 Most arguments bear the same meaning as in `imagetable`.
 
 Example: `examples/tile.py`
-
 
 ## Integrated example
 For an integrated example of how HTML4Vision is used in practice, you can check out the [sAP repo](https://github.com/mtli/sAP/blob/master/doc/tasks.md#web-display).
