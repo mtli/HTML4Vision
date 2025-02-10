@@ -88,7 +88,10 @@ def imagetile(
                         for c in range(n_col):
                             idx = r*n_col + c
                             if idx < n_item:
-                                kw = get_imsize_attrs(imsize, preserve_aspect)
+                                if imsize[0] is None or imsize[1] is None:
+                                    kw = {}
+                                else:
+                                    kw = get_imsize_attrs(imsize, preserve_aspect)
                                 tda(href, idx, img_(src=items[idx], **kw))
                             else:
                                 td()

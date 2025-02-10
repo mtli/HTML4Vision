@@ -110,6 +110,6 @@ ENV/
 nosync/
 tests/
 examples/*.html
-examples/another-dir/*.html
+examples/another-dir/
 examples/images/thumbs
 

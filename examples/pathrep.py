@@ -1,3 +1,4 @@
+from os import makedirs
 from html4vision import Col, imagetable
 
 cols = [
@@ -7,4 +8,5 @@ cols = [
     Col('img', 'Amodel Road Mask', 'images/road_*_amodelroad.png'),
 ]
 
+makedirs('another-dir', exist_ok=True)
 imagetable(cols, 'another-dir/pathrep.html', 'Path Replace Example', pathrep=('images', '../images'))

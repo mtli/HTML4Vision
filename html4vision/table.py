@@ -286,7 +286,10 @@ def imagetable(
                                             img_(src=col_content[i+1][r], cls='overlay', width=imsize[0], height=imsize[1])
                             else:
                                 if r < col_n_row[i]:
-                                    kw = get_imsize_attrs(imsize, preserve_aspect)
+                                    if imsize[0] is None or imsize[1] is None:
+                                        kw = {}
+                                    else:
+                                        kw = get_imsize_attrs(imsize, preserve_aspect)
                                     tda(col_href[i], r, img_(src=thumb(col_content[i][r], i), **kw))
                                 else:
                                     td()

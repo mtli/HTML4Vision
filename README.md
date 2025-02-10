@@ -225,3 +225,13 @@ Example: `examples/model.py`
 Any contribution is welcome! Many thanks to these noteworthy community contributions:
 - [connellybarnes](https://github.com/connellybarnes): thumbnail generation
 - [bertjiazheng](http://github.com/bertjiazheng): 3d model support
+
+When contributing, please use the examples to test your changes:
+On Windows, run
+```bat
+for %f in (*.py) do python "%f"
+```
+On Mac or Linux, run
+```bash
+for f in *.py; do python "$f"; done
+```
