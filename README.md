@@ -237,11 +237,13 @@ Any contribution is welcome! Many thanks to these noteworthy community contribut
 - [bertjiazheng](http://github.com/bertjiazheng): 3d model support
 
 When contributing, please use the examples to test your changes:
-On Windows, run
+
+In the `examples` folder, run
 ```bat
 for %f in (*.py) do python "%f"
 ```
-On Mac or Linux, run
+on Windows, or run
 ```bash
 for f in *.py; do python "$f"; done
 ```
+on Mac or Linux.
