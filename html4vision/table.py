@@ -42,6 +42,7 @@ def imagetable(
     precompute_thumbs=False,
     thumb_quality=95,
     inline_js=None,
+    escape_summary_row=True,
 
     # style
     imsize=None,
@@ -296,7 +297,7 @@ def imagetable(
                             if col.type == 'overlay':
                                 continue
                             else:
-                                td(summary_row[i])
+                                td(text(summary_row[i], escape=escape_summary_row))
                 for r in range(n_row):
                     with tr():
                         for i, col in enumerate(cols):

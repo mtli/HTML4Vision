@@ -66,7 +66,7 @@ imagetable(
     # additional contents
     summary_row=None, copyright=True,
     # modifiers
-    pathrep=None, sortcol=None, precompute_thumbs=False, thumb_quality=95, inline_js=None,
+    pathrep=None, sortcol=None, precompute_thumbs=False, thumb_quality=95, inline_js=None, escape_summary_role=True,
     # style
     imsize=None, imscale=1, preserve_aspect=True, hori_center_img=False,
     summary_color=None, sticky_header=False, sort_style=None, zebra=False, style=None,
@@ -85,7 +85,7 @@ The meaning and format for other arguments can be found in respective sections
 - [sorting](#sorting): `sortcol`, `sortable`, `sticky_header`, `sort_style`, `zebra`, `summary_row` and `summary_color`.
 - [display toggle](#display-toggle): `overlay_toggle`.
 - [styling through CSS](#styling-through-CSS): `style`.
-- [advanced content modification](#advanced-content-modification): `inline_js`.
+- [advanced content modification](#advanced-content-modification): `inline_js`, `escape_summary_role`.
 - [3d models](#3d-models): `auto_rotate`, `camera_controls` and `mesh_opt`.
 
 ## Web publishing
@@ -166,6 +166,8 @@ You can insert custom JavaScript code to modify the content of the table after t
 </p>
 
 Example: `examples/merge_cells.py`
+
+You can also provide a raw HTML string for the summary row by setting `escape_summary_row=False`. This is useful if you want to include multiple links within the same cell or other HTML elements. For example: `[<a href="https://foo" target="_blank">foo</a>] [<a href="https://bar" target="_blank">bar</a>]`
 
 ## Interactive tables
 
