@@ -1,5 +1,6 @@
 import os
 from glob import glob
+from concurrent.futures import ThreadPoolExecutor
 
 from dominate.tags import html_tag, td, a, div  # type: ignore
 from dominate.util import text  # type: ignore
@@ -46,26 +47,33 @@ def parse_content(descriptor, subset=None, pathrep=None, message=None, thumb_fun
     else:
         raise ValueError('Invalid type of content descriptor: %s', type(descriptor))
     out = subsetsel(out, subset)
+    if not out:
+        return out
 
     if thumb_func is not None:
-        out = [thumb_func(s) for s in out]
+        with ThreadPoolExecutor() as executor:
+            out = list(executor.map(thumb_func, out))
+
     if pathrep:
         out = [s.replace('\\', '/').replace(pathrep[0], pathrep[1]) for s in out]
     return out
 
 
 class img_(html_tag):
-    """Wrapper that removes empty attributes"""
+    """Wrapper that removes empty attributes and supports data-src for lazy loading"""
     tagname = 'img'
 
-    def __init__(self, *args, **kwargs):
-        empty_attrs = []
-        for attr, value in kwargs.items():
-            if not value:
-                empty_attrs.append(attr)
-        for attr in empty_attrs:
-            del kwargs[attr]
-        super(img_, self).__init__(*args, **kwargs)
+    # When True, a provided "src" attribute is moved to "data-src" so that
+    # the browser does not automatically start downloading the image. The
+    # JavaScript limiter will later copy it back to "src".
+    use_data_src = False
+
+    def __init__(self, **kwargs):
+        kwargs = {k: v for k, v in kwargs.items() if v}
+        if img_.use_data_src and 'src' in kwargs:
+            kwargs['data-src'] = kwargs['src']
+            del kwargs['src']
+        super(img_, self).__init__(**kwargs)
 
 
 class model_(html_tag):

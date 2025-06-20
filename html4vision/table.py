@@ -65,7 +65,12 @@ def imagetable(
     auto_rotate=False,
     camera_controls=True,
     mesh_opt=False,
+
+    # performance
+    max_image_load_concurrency=None,
 ):
+    img_.use_data_src = max_image_load_concurrency is not None
+
     n_col = len(cols)
 
     match_col = None
@@ -105,6 +110,7 @@ def imagetable(
             preserve_aspect=preserve_aspect,
             quality=thumb_quality,
         )
+        imscale = 1
     else:
         thumb_func = None
 
@@ -347,19 +353,24 @@ def imagetable(
 
         if match_col is not None:
             jscode = getjs('matchCol.js')
-            jscode += '\nmatchCol(%d, %g);\n' % (
-                match_col, imscale if not precompute_thumbs else 1.0
-            )
+            jscode += '\nmatchCol(%d, %g);\n' % (match_col, imscale)
             script(text(jscode, escape=False))
         elif imsize[0] is None and imscale != 1:
             jscode = getjs('scaleImg.js')
-            jscode += '\nscaleImg(%g);\n' % (imscale if not precompute_thumbs else 1.0)
+            jscode += '\nscaleImg(%g);\n' % imscale
             script(text(jscode, escape=False))
         if overlay_toggle:
             jscode = getjs('overlayToggle.js')
+            script(text(jscode, escape=False))
+        if max_image_load_concurrency is not None:
+            jscode = getjs('limitImgLoad.js')
+            jscode += '\nlimitImgLoad(%d);\n' % max_image_load_concurrency
             script(text(jscode, escape=False))
         if inline_js:
             script(text(inline_js, escape=False))
 
     with open(out_file, 'w', encoding='utf-8') as f:
         f.write(doc.render())
+
+    # Reset the global flag to avoid side effects for subsequent calls
+    img_.use_data_src = False

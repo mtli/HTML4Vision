@@ -5,8 +5,13 @@ cols = [
     Col('img', 'Detections', 'images/det_*.jpg'),
 ]
 
-imagetable(cols, 'auto_thumbs.html', 'Auto Thumbnails',
+imagetable(
+    cols,
+    'auto_thumbs.html',
+    'Auto Thumbnails',
     precompute_thumbs=True,
     imscale=0.25,
     thumbs_dir='images/thumbs',
+    # Optionally limit the number of images loaded in parallel to work around server rate-limiting.
+    max_image_load_concurrency=1,
 )

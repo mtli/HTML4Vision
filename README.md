@@ -74,6 +74,8 @@ imagetable(
     overlay_toggle=False, sortable=False,
     # 3d model viewer
     auto_rotate=False, camera_controls=True, mesh_opt=False,
+    # performance
+    max_image_load_concurrency=None,
 )
 ```
 The only required argument is `cols`, which is a sequence of `Col` objects, specifying the content of the table. `out_file` optionally names the output file while `title` sets the title of the generated HTML page.
@@ -87,6 +89,7 @@ The meaning and format for other arguments can be found in respective sections
 - [styling through CSS](#styling-through-CSS): `style`.
 - [advanced content modification](#advanced-content-modification): `inline_js`, `escape_summary_row`.
 - [3d models](#3d-models): `auto_rotate`, `camera_controls` and `mesh_opt`.
+- [performance](#performance): `max_image_load_concurrency`.
 
 ## Web publishing
 
@@ -164,6 +167,16 @@ You can insert custom JavaScript code to modify the content of the table after t
 Example: `examples/merge_cells.py`
 
 You can also provide a raw HTML string for the summary row by setting `escape_summary_row=False`. This is useful if you want to include multiple links within the same cell or other HTML elements. For example: `[<a href="https://foo" target="_blank">foo</a>] [<a href="https://bar" target="_blank">bar</a>]`
+
+## Performance
+
+When the table contains hundreds of images hosted remotely you may encounter HTTP connection limits or rate-limiting from the server.  Set `max_image_load_concurrency` to limit how many images are downloaded in parallel:
+
+```python
+imagetable(cols, max_image_load_concurrency=16)
+```
+
+A small piece of JavaScript is embedded in the generated HTML to queue the `<img>` requests so that at most the specified number are in-flight simultaneously.  If a request fails with a rate-limit status (HTTP 429 or 503) it is automatically retried with exponential back-off.  The feature is disabled when the argument is `None` (default).
 
 ## Interactive tables
 
