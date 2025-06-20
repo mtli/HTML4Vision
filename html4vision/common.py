@@ -34,7 +34,7 @@ def parse_pathrep(pathrep):
     return (pathrep_old, pathrep_new)
 
 
-def parse_content(descriptor, subset=None, pathrep=None, message=None):
+def parse_content(descriptor, subset=None, pathrep=None, message=None, thumb_func=None):
     """ Parse content descriptor """
     if isinstance(descriptor, list):
         out = descriptor
@@ -46,6 +46,9 @@ def parse_content(descriptor, subset=None, pathrep=None, message=None):
     else:
         raise ValueError('Invalid type of content descriptor: %s', type(descriptor))
     out = subsetsel(out, subset)
+
+    if thumb_func is not None:
+        out = [thumb_func(s) for s in out]
     if pathrep:
         out = [s.replace('\\', '/').replace(pathrep[0], pathrep[1]) for s in out]
     return out
@@ -96,7 +99,7 @@ def copyright_html():
         text(' v' + __version__)
 
 
-def get_imsize_attrs(imsize, preserve_aspect):
+def imsize_attrs(imsize, preserve_aspect):
     if not preserve_aspect:
         return {'width': imsize[0], 'height': imsize[1]}
     else:

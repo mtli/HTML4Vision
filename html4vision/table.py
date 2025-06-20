@@ -1,8 +1,9 @@
 from __future__ import print_function
-import os
-from codecs import open
 
+import os
+from codecs import open  # For Python 2 compatibility
 from collections import namedtuple
+from functools import partial
 
 import dominate  # type: ignore
 from dominate.tags import meta, link, script, table, thead, tbody, tr, th, td, div  # type: ignore
@@ -12,7 +13,7 @@ from .common import (
     copyright_css,
     copyright_html,
     getjs,
-    get_imsize_attrs,
+    imsize_attrs,
     img_,
     model_,
     parse_pathrep,
@@ -20,7 +21,8 @@ from .common import (
     subsetsel,
     tda,
 )
-from .thumbs import ThumbnailGenerator
+
+from .thumbs import make_thumbnail
 
 
 Col = namedtuple('Col', 'type, name, content, subset, style, href')
@@ -64,40 +66,6 @@ def imagetable(
     camera_controls=True,
     mesh_opt=False,
 ):
-
-    thumbnail_generators = []
-    if precompute_thumbs and imsize is None and imscale == 1:
-        precompute_thumbs = False
-
-    if precompute_thumbs:
-        if thumbs_dir is None:
-            thumbs_dir = os.path.splitext(out_file)[0] + '_thumbs'
-        if not os.path.isdir(thumbs_dir):
-            os.makedirs(thumbs_dir)
-        if isinstance(imsize, tuple):
-            imsizes = [imsize for col in cols]
-        elif isinstance(imsize, list):
-            imsizes = imsize
-        elif hasattr(imsize, 'real'):
-            raise NotImplementedError(
-                'cannot use a single integer index for imsize with precompute_thumbs=True'
-            )
-        elif imsize is None:
-            imsizes = [None for col in cols]
-        else:
-            raise ValueError('unknown imsize format: please see documentation')
-        thumbnail_generators = [
-            ThumbnailGenerator(
-                thumbs_dir, imsizes[i], imscale, preserve_aspect, quality=thumb_quality)
-            for i in range(len(cols))
-        ]
-
-    def thumb(filename, i):
-        if not precompute_thumbs:
-            return filename
-        else:
-            return thumbnail_generators[i].make_thumb(filename)
-
     n_col = len(cols)
 
     match_col = None
@@ -120,8 +88,25 @@ def imagetable(
             )
     if imsize is not None and imscale != 1:
         imsize = (imsize[0]*imscale, imsize[1]*imscale)
+        imscale = 1
     if imsize is None:
         imsize = [None, None]
+
+    if precompute_thumbs:
+        if thumbs_dir is None:
+            thumbs_dir = os.path.splitext(out_file)[0] + '_thumbs'
+        if not os.path.isdir(thumbs_dir):
+            os.makedirs(thumbs_dir)
+        thumb_func = partial(
+            make_thumbnail,
+            thumbs_dir=thumbs_dir,
+            imsize=imsize,
+            imscale=imscale,
+            preserve_aspect=preserve_aspect,
+            quality=thumb_quality,
+        )
+    else:
+        thumb_func = None
 
     if sortcol is not None:
         if not isinstance(sortcol, int) or sortcol < 0 or sortcol >= n_col:
@@ -145,13 +130,21 @@ def imagetable(
     for i, col in enumerate(cols):
         col_idx_no_overlay[i] = col_idx
         col_idx += 1
+        is_img_col = False
         if col.type == 'id0' or col.type == 'id1':
             col_n_row[i] = 0
         elif col.type == 'text':
             col_content[i] = subsetsel(col.content, col.subset)
             col_n_row[i] = len(col_content[i])
         elif col.type == 'img' or col.type == 'overlay':
-            col_content[i] = parse_content(col.content, col.subset, pathrep, 'Col %d' % i)
+            is_img_col = True
+            col_content[i] = parse_content(
+                col.content,
+                col.subset,
+                pathrep,
+                'Col %d' % i,
+                thumb_func=thumb_func,
+            )
             col_n_row[i] = len(col_content[i])
             if col.type == 'overlay':
                 if i == 0 or cols[i-1].type != 'img':
@@ -170,8 +163,10 @@ def imagetable(
 
         if col.href:
             col_href[i] = parse_content(col.href, col.subset, pathrep, 'Col %d href' % i)
-        elif precompute_thumbs:
-            col_href[i] = col_content[i]
+        elif is_img_col and precompute_thumbs:
+            # For thumbnails, we want hrefs to point to the high-resolution
+            # images (after path replacement), not the thumbnail files.
+            col_href[i] = parse_content(col.content, col.subset, pathrep, 'Col %d href' % i)
 
     n_row = max(col_n_row)
     match_col = col_idx_no_overlay[match_col] if match_col else match_col
@@ -343,8 +338,8 @@ def imagetable(
                                     if imsize[0] is None or imsize[1] is None:
                                         kw = {}
                                     else:
-                                        kw = get_imsize_attrs(imsize, preserve_aspect)
-                                    tda(col_href[i], r, img_(src=thumb(col_content[i][r], i), **kw))
+                                        kw = imsize_attrs(imsize, preserve_aspect)
+                                    tda(col_href[i], r, img_(src=col_content[i][r], **kw))
                                 else:
                                     td()
         if copyright:

@@ -10,7 +10,7 @@ from dominate.util import text  # type: ignore
 from .common import (
     copyright_html,
     getjs,
-    get_imsize_attrs,
+    imsize_attrs,
     img_,
     parse_pathrep,
     parse_content,
@@ -105,7 +105,7 @@ def imagetile(
                                 if imsize[0] is None or imsize[1] is None:
                                     kw = {}
                                 else:
-                                    kw = get_imsize_attrs(imsize, preserve_aspect)
+                                    kw = imsize_attrs(imsize, preserve_aspect)
                                 tda(href, idx, img_(src=items[idx], **kw))
                             else:
                                 td()
