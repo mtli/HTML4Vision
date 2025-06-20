@@ -297,7 +297,7 @@ def imagetable(
                             if col.type == 'overlay':
                                 continue
                             else:
-                                td(text(summary_row[i], escape=escape_summary_row))
+                                td(text(str(summary_row[i]), escape=escape_summary_row))
                 for r in range(n_row):
                     with tr():
                         for i, col in enumerate(cols):
