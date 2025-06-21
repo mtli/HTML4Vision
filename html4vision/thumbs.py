@@ -22,14 +22,14 @@ def make_thumbnail(
     digest = hashlib.sha1(filepath.encode('utf-8')).hexdigest()
     thumb_filename = os.path.join(thumbs_dir, digest + '.webp')
 
-    # Check modification time – regenerate only when outdated or missing.
+    # Check modification time - regenerate only when outdated or missing.
     thumb_ok = True
     st_filename = os.stat(filepath)
     try:
         st_thumb = os.stat(thumb_filename)
         if st_thumb.st_mtime < st_filename.st_mtime:
             thumb_ok = False
-    except FileNotFoundError:
+    except (IOError, OSError):  # Python 2 compatibility: FileNotFoundError is not defined
         thumb_ok = False
 
     if not thumb_ok:

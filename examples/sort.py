@@ -20,15 +20,19 @@ for i, s in enumerate(pref):
             class_perf[j][i - 1] = float(items[j + 1])
 
 cols = [
-    Col('id1', 'ID'), # 1-based indexing
+    Col('id1', 'ID'),  # 1-based indexing
     Col('img', 'Detection', 'images/det_*.jpg'),
     Col('text', 'Class Average', ave_perf),
 ]
 for i in range(n_class):
     cols.append(Col('text', class_names[i], class_perf[i]))
 
-summary_row = ['S', '', *summary_info]
-imagetable(cols, 'sort.html', 'Sorting Example',
+summary_row = ['S', ''] + summary_info
+
+imagetable(
+    cols,
+    'sort.html',
+    'Sorting Example',
     summary_row=summary_row,    # add a summary row showing overall statistics of the dataset
     summary_color='#fff9b7',    # highlight the summary row
     imscale=0.4,                # scale images to 0.4 of the original size

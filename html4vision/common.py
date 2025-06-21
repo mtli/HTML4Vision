@@ -1,6 +1,12 @@
+from __future__ import print_function
+
 import os
 from glob import glob
-from concurrent.futures import ThreadPoolExecutor
+try:
+    from concurrent.futures import ThreadPoolExecutor
+except ImportError:
+    # For Python 2
+    from futures import ThreadPoolExecutor  # type: ignore
 
 from dominate.tags import html_tag, td, a, div  # type: ignore
 from dominate.util import text  # type: ignore

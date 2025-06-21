@@ -50,7 +50,7 @@ function limitImgLoad(maxConcurrency) {
                 const resp = await fetch(src, { method: "HEAD" });
                 isRateLimited = resp.status === 429 || resp.status === 503;
             } catch (e) {
-                // Cross-origin or network error – we cannot determine status.
+                // Cross-origin or network error - we cannot determine status.
             }
 
             if (isRateLimited && item.retries < maxRetries) {
@@ -63,7 +63,7 @@ function limitImgLoad(maxConcurrency) {
                     scheduleNext();
                 }, delay);
             } else {
-                // Give up – restore the broken image icon.
+                // Give up - restore the broken image icon.
                 img.setAttribute("src", src);
                 cleanup();
             }

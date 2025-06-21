@@ -1,8 +1,6 @@
 from __future__ import print_function
 from codecs import open
 
-from math import ceil
-
 import dominate  # type: ignore
 from dominate.tags import meta, script, table, tbody, tr, td  # type: ignore
 from dominate.util import text  # type: ignore
@@ -66,7 +64,7 @@ def imagetile(
     if href is not None:
         href = parse_content(href, subset, pathrep, 'tile href')
 
-    n_row = ceil(float(n_item) / n_col)
+    n_row = -(-n_item // n_col)
 
     def add_caption(r):
         with tr():

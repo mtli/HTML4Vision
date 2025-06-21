@@ -39,6 +39,7 @@ setup(
         'Flask',
         'dominate',
         'Pillow',
+        'futures; python_version < "3.2"',
     ],
     include_package_data = True,
 )
