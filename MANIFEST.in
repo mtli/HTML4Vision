@@ -1,5 +1,0 @@
-include README.md LICENSE.txt
-include html4vision/*.js
-
-global-exclude __pycache__
-global-exclude *.pyc

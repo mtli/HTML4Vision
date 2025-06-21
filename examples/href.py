@@ -7,7 +7,13 @@ cols = [
     # for overlay columns, href should be attached to the preceding img column
     Col('overlay', '', 'images/road_*_label.png', 1, 'opacity: 0.4'),
     # href supports a list of URLs, each one for each row
-    Col('img', 'Amodel Road Mask', 'images/road_*_amodelroad.png', 1, href=['https://github.com/mtli/HTML4Vision']),
+    Col(
+        'img',
+        'Amodel Road Mask',
+        'images/road_*_amodelroad.png',
+        1,
+        href=['https://github.com/mtli/HTML4Vision'],
+    ),
 ]
 
 imagetable(cols, 'href.html', 'Hyperlink Example')

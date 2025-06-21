@@ -20,7 +20,7 @@ num_experiments = len(results[0])
 flattened = list(chain(*results))
 
 
-def pad_empty_rows(items, n):
+def pad_empty_rows(items: list[str], n: int) -> list[str]:
     return [elem for item in items for elem in ([item] + [''] * n)]
 
 
@@ -44,9 +44,9 @@ table_style = """
 """
 
 # Using "{{" and "}}" to escape the f-string syntax.
-inline_js = """
+inline_js = f"""
     document.addEventListener("DOMContentLoaded", function() {{
-        var multirowCols = {multirow_cols};
+        var multirowCols = {len(multirow_cols)};
         var rowsToMerge = {num_experiments};
 
         var tbody = document.querySelector("table.html4vision tbody");
@@ -66,7 +66,7 @@ inline_js = """
             }}
         }}
     }});
-""".format(multirow_cols=len(multirow_cols), num_experiments=num_experiments)
+"""
 
 imagetable(
     cols=multirow_cols + regular_cols,
@@ -74,7 +74,7 @@ imagetable(
     title='Compare Experiments',
     imsize=(300, 300),  # Define the maximum display size of the image.
     hori_center_img=True,  # Center images horizontally within their cells.
-    sort_style="materialize",  # Apply materialize theme from tablesorter.
+    sort_style='materialize',  # Apply materialize theme from tablesorter.
     style=table_style,  # Enable table borders.
     inline_js=inline_js,  # Merge cells in the table after the page loads.
 )

@@ -19,6 +19,8 @@ pip install html4vision
 ```
 [![PyPI version](https://badge.fury.io/py/HTML4Vision.svg)](https://badge.fury.io/py/HTML4Vision)
 
+Please note that support for Python 2 has been discontinued. Version 0.5.2 is the last release compatible with Python 2.
+
 ## Table description and generation
 
 You can use glob patterns (e.g. `results/*_method_2.png`) to specify the content and use `imagetable()` to generate the table automatically.

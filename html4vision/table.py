@@ -1,74 +1,70 @@
-from __future__ import print_function
-
 import os
-from codecs import open  # For Python 2 compatibility
-from collections import namedtuple
+from collections.abc import Sequence
 from functools import partial
+from typing import Any, NamedTuple
 
-import dominate  # type: ignore
-from dominate.tags import meta, link, script, table, thead, tbody, tr, th, td, div  # type: ignore
-from dominate.util import text  # type: ignore
+import dominate
+from dominate.tags import div, link, meta, script, table, tbody, td, th, thead, tr
+from dominate.util import text
 
 from .common import (
     copyright_css,
     copyright_html,
     getjs,
-    imsize_attrs,
     img_,
+    imsize_attrs,
     model_,
-    parse_pathrep,
     parse_content,
+    parse_pathrep,
     subsetsel,
     tda,
 )
-
 from .thumbs import make_thumbnail
 
-
-Col = namedtuple('Col', 'type, name, content, subset, style, href')
-Col.__new__.__defaults__ = ('img',) + (None,) * (len(Col._fields) - 1)
+class Col(NamedTuple):
+    type: str = 'img'
+    name: str | None = None
+    content: Any = None
+    subset: int | tuple[int, ...] | list[int] | None = None
+    style: str | None = None
+    href: Any = None
 
 
 def imagetable(
     # contents
-    cols,
-    out_file='index.html',
-    title='',
-    summary_row=None,
-    copyright=True,
-    thumbs_dir=None,
-
+    cols: list[Col],
+    out_file: str = 'index.html',
+    title: str = '',
+    summary_row: Sequence[Any] | None = None,
+    copyright: bool = True,
+    thumbs_dir: str | None = None,
     # modifiers
-    pathrep=None,
-    sortcol=None,
-    precompute_thumbs=False,
-    thumb_quality=95,
-    inline_js=None,
-    escape_summary_row=True,
-
+    pathrep: str | tuple[str, str] | list[str] | None = None,
+    sortcol: int | None = None,
+    precompute_thumbs: bool = False,
+    thumb_quality: int = 95,
+    inline_js: str | None = None,
+    escape_summary_row: bool = True,
     # style
-    imsize=None,
-    imscale=1,
-    preserve_aspect=True,
-    hori_center_img=False,
-    summary_color=None,
-    sticky_header=False,
-    sort_style=None,
-    zebra=False,
-    style=None,
-
+    imsize: int | Sequence[int | float | None] | None = None,
+    imscale: float = 1,
+    preserve_aspect: bool = True,
+    hori_center_img: bool = False,
+    summary_color: str | None = None,
+    sticky_header: bool = False,
+    sort_style: str | None = None,
+    zebra: bool = False,
+    style: str | None = None,
     # interaction
-    overlay_toggle=False,
-    sortable=False,
-
+    overlay_toggle: bool = False,
+    sortable: bool = False,
     # 3d model viewer
-    auto_rotate=False,
-    camera_controls=True,
-    mesh_opt=False,
-
+    auto_rotate: bool = False,
+    camera_controls: bool = True,
+    mesh_opt: bool = False,
     # performance
-    max_image_load_concurrency=None,
-):
+    max_image_load_concurrency: int | None = None,
+) -> None:
     img_.use_data_src = max_image_load_concurrency is not None
 
     n_col = len(cols)
@@ -83,16 +79,21 @@ def imagetable(
                     'Invalid column type "' + cols[match_col].type + '" when "imsize" is '
                     'interpreted as size matching column given index'
                 )
-        elif not (
-            (isinstance(imsize, list) or type(imsize) is tuple)  # noqa: E721
-            and len(imsize) == 2 and imsize[0] > 0 and imsize[1] > 0
-        ):
-            raise ValueError(
-                '"imsize" needs to be a column index, or a list/tuple of size 2 specifying '
-                'the width and the height'
-            )
+        else:
+            if not (
+                (isinstance(imsize, list) or type(imsize) is tuple)  # noqa: E721
+                and len(imsize) == 2
+                and imsize[0] is not None and imsize[1] is not None
+                and imsize[0] > 0 and imsize[1] > 0
+            ):
+                raise ValueError(
+                    '"imsize" needs to be a column index, or a list/tuple of size 2 specifying '
+                    'the width and the height'
+                )
     if imsize is not None and imscale != 1:
-        imsize = (imsize[0]*imscale, imsize[1]*imscale)
+        assert isinstance(imsize, list) or type(imsize) is tuple  # noqa: E721
+        assert imsize[0] is not None and imsize[1] is not None
+        imsize = (imsize[0] * imscale, imsize[1] * imscale)
         imscale = 1
     if imsize is None:
         imsize = [None, None]
@@ -105,7 +106,7 @@ def imagetable(
         thumb_func = partial(
             make_thumbnail,
             thumbs_dir=thumbs_dir,
-            imsize=imsize,
+            imsize=imsize,  # type: ignore[arg-type]
             imscale=imscale,
             preserve_aspect=preserve_aspect,
             quality=thumb_quality,
@@ -121,14 +122,14 @@ def imagetable(
             raise ValueError('The type of the column specified by "sortcol" should be "text"')
 
     # variables to store the processed contents
-    col_content = [None]*n_col
-    col_href = [None]*n_col
-    col_n_row = [None]*n_col
+    col_content: list[list[str]] = [[] for _ in range(n_col)]
+    col_href: list[list[str] | None] = [None] * n_col
+    col_n_row: list[int | None] = [None] * n_col
 
     use_overlay = False
     use_model_viewer = False
-    col_pre_overlay = [False]*n_col
-    col_idx_no_overlay = [None]*n_col
+    col_pre_overlay: list[bool] = [False] * n_col
+    col_idx_no_overlay: list[int | None] = [None] * n_col
     col_idx = 0
 
     pathrep = parse_pathrep(pathrep)
@@ -140,7 +141,8 @@ def imagetable(
         if col.type == 'id0' or col.type == 'id1':
             col_n_row[i] = 0
         elif col.type == 'text':
-            col_content[i] = subsetsel(col.content, col.subset)
+            assert col.content is not None
+            col_content[i] = subsetsel(col.content, col.subset)  # type: ignore[arg-type]
             col_n_row[i] = len(col_content[i])
         elif col.type == 'img' or col.type == 'overlay':
             is_img_col = True
@@ -153,13 +155,15 @@ def imagetable(
             )
             col_n_row[i] = len(col_content[i])
             if col.type == 'overlay':
-                if i == 0 or cols[i-1].type != 'img':
+                if i == 0 or cols[i - 1].type != 'img':
                     raise ValueError('The column preceding "overlay" type must be of "img" type')
                 else:
                     use_overlay = True
-                    col_pre_overlay[i-1] = True
+                    col_pre_overlay[i - 1] = True
                     col_idx -= 1
-                    col_idx_no_overlay[i] -= 1
+                    tmp_idx = col_idx_no_overlay[i] or 0
+                    tmp_idx -= 1
+                    col_idx_no_overlay[i] = tmp_idx
         elif col.type == 'model':
             use_model_viewer = True
             col_content[i] = parse_content(col.content, col.subset, pathrep, 'Col %d' % i)
@@ -174,7 +178,7 @@ def imagetable(
             # images (after path replacement), not the thumbnail files.
             col_href[i] = parse_content(col.content, col.subset, pathrep, 'Col %d href' % i)
 
-    n_row = max(col_n_row)
+    n_row = max(x for x in col_n_row if x is not None)
     match_col = col_idx_no_overlay[match_col] if match_col else match_col
 
     if sortcol is not None:
@@ -184,12 +188,15 @@ def imagetable(
         sorted_idx += list(range(n_item, n_row))  # in case the sort list is shorter than others
         for i in range(n_col):
             if col_n_row[i]:
-                col_content[i] = [col_content[i][x] if x < col_n_row[i] else '' for x in sorted_idx]
+                nri = col_n_row[i] or 0
+                col_content[i] = [col_content[i][x] if x < nri else '' for x in sorted_idx]
                 if col_href[i]:
-                    col_href[i] = [
-                        col_href[i][x] if x < len(col_href[i]) else '' for x in sorted_idx
-                    ]
-                col_n_row[i] = max(n_item, col_n_row[i])  # the sort list can be longer than others
+                    href_i = col_href[i]
+                    assert href_i is not None
+                    col_href[i] = [href_i[x] if x < len(href_i) else '' for x in sorted_idx]
+                col_n_row[i] = max(
+                    n_item, col_n_row[i] or 0
+                )  # the sort list can be longer than others
 
     cdn = 'https://cdnjs.cloudflare.com/ajax/libs/'
     cdn_ts = 'https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.30.7/'
@@ -210,7 +217,10 @@ def imagetable(
             meta(charset='utf-8')
 
             if sort_style:
-                link(href=cdn_ts + 'css/theme.' + sort_style + '.min.css', rel='stylesheet')
+                link(
+                    href=cdn_ts + 'css/theme.' + sort_style + '.min.css',
+                    rel='stylesheet',
+                )
             if use_tablesorter:
                 script(src=cdn + 'jquery/3.3.1/jquery.slim.min.js')
                 script(src=cdn_ts + 'js/jquery.tablesorter.min.js')
@@ -224,20 +234,31 @@ def imagetable(
                 ts_opts += 'widgets: [' + (', '.join('"' + w + '"' for w in ts_widgets)) + '],\n'
                 if ts_opts:
                     ts_opts = '{\n' + ts_opts + '}'
-                script(text(
-                    '$(function(){$(".tablesorter").tablesorter(' + ts_opts + ');});', escape=False
-                ))
+                script(
+                    text(
+                        '$(function(){$(".tablesorter").tablesorter(' + ts_opts + ');});',
+                        escape=False,
+                    )
+                )
 
             if use_model_viewer:
-                model_viewer_opts = {'auto-rotate': auto_rotate, 'camera-controls': camera_controls}
+                model_viewer_opts = {
+                    'auto-rotate': auto_rotate,
+                    'camera-controls': camera_controls,
+                }
                 if mesh_opt:
-                    script(text("""
+                    script(
+                        text(
+                            '''
     self.ModelViewerElement = self.ModelViewerElement || {};
     self.ModelViewerElement.meshoptDecoderLocation = 'https://cdn.jsdelivr.net/npm/meshoptimizer/meshopt_decoder.js';
-                    """, escape=False))  # noqa
+                    ''',
+                            escape=False,
+                        )
+                    )  # noqa
                 script(
-                    type="module",
-                    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js",
+                    type='module',
+                    src='https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js',
                 )
 
             css = ''
@@ -260,8 +281,9 @@ def imagetable(
                 css += '.overlay {position: absolute; left: 0; top: 0}\n'
             if summary_color:
                 css += (
-                    '.html4vision tr.static td {background-color: ' +
-                    summary_color + ' !important}\n'
+                    '.html4vision tr.static td {background-color: '
+                    + summary_color
+                    + ' !important}\n'
                 )
             if style:
                 css += style + '\n'
@@ -269,12 +291,15 @@ def imagetable(
             for i, col in enumerate(cols):
                 if col.style:
                     if col.type == 'overlay':
-                        css += (
-                            'td:nth-child(%d) img.overlay {%s}\n'
-                            % (col_idx_no_overlay[i] + 1, col.style)
+                        css += 'td:nth-child(%d) img.overlay {%s}\n' % (
+                            (col_idx_no_overlay[i] or 0) + 1,
+                            col.style,
                         )
-                    else:   # CSS uses 1-based indexing
-                        css += 'td:nth-child(%d) {%s}\n' % (col_idx_no_overlay[i] + 1, col.style)
+                    else:  # CSS uses 1-based indexing
+                        css += 'td:nth-child(%d) {%s}\n' % (
+                            (col_idx_no_overlay[i] or 0) + 1,
+                            col.style,
+                        )
             dominate.tags.style(text(css, escape=False))
         tablecls = 'html4vision'
         if sortable or sticky_header:
@@ -309,15 +334,18 @@ def imagetable(
                                 idx = sorted_idx[r] if sortcol is not None else r
                                 tda(col_href[i], r, idx + 1)
                             elif col.type == 'text':
-                                if r < col_n_row[i]:
+                                nri = col_n_row[i] or 0
+                                if r < nri:
                                     tda(col_href[i], r, col_content[i][r])
                                 else:
                                     td()
                             elif col.type == 'model':
-                                if r < col_n_row[i]:
+                                nri = col_n_row[i] or 0
+                                if r < nri:
                                     tda(
-                                        col_href[i], r,
-                                        model_(src=col_content[i][r], **model_viewer_opts)
+                                        col_href[i],
+                                        r,
+                                        model_(src=col_content[i][r], **model_viewer_opts),
                                     )
                                 else:
                                     td()
@@ -326,26 +354,35 @@ def imagetable(
                             elif col_pre_overlay[i]:
                                 with tda(col_href[i], r):
                                     with div():
-                                        if r < col_n_row[i]:
+                                        nri = col_n_row[i] or 0
+                                        if r < nri:
                                             img_(
                                                 src=col_content[i][r],
                                                 width=imsize[0],
                                                 height=imsize[1],
                                             )
-                                        if r < col_n_row[i+1]:
+                                        nri_next = col_n_row[i + 1] or 0
+                                        if r < nri_next:
                                             img_(
-                                                src=col_content[i+1][r],
+                                                src=col_content[i + 1][r],
                                                 cls='overlay',
                                                 width=imsize[0],
                                                 height=imsize[1],
                                             )
                             else:
-                                if r < col_n_row[i]:
+                                nri = col_n_row[i] or 0
+                                if r < nri:
                                     if imsize[0] is None or imsize[1] is None:
                                         kw = {}
                                     else:
-                                        kw = imsize_attrs(imsize, preserve_aspect)
-                                    tda(col_href[i], r, img_(src=col_content[i][r], **kw))
+                                        kw = imsize_attrs(
+                                            (int(imsize[0]), int(imsize[1])), preserve_aspect
+                                        )
+                                    tda(
+                                        col_href[i],
+                                        r,
+                                        img_(src=col_content[i][r], **kw),
+                                    )
                                 else:
                                     td()
         if copyright:

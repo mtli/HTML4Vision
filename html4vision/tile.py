@@ -1,9 +1,8 @@
-from __future__ import print_function
-from codecs import open
+from collections.abc import Sequence
 
-import dominate  # type: ignore
-from dominate.tags import meta, script, table, tbody, tr, td  # type: ignore
-from dominate.util import text  # type: ignore
+import dominate
+from dominate.tags import meta, script, table, tbody, tr, td
+from dominate.util import text
 
 from .common import (
     copyright_html,
@@ -19,64 +18,76 @@ from .common import (
 
 def imagetile(
     # contents
-    content,
-    n_col=3,
-    out_file='index.html',
-    title='',
-    caption=None,
-    href=None,
-    subset=None,
-    copyright=True,
-
+    content: str | Sequence[str],
+    n_col: int = 3,
+    out_file: str = 'index.html',
+    title: str = '',
+    caption: Sequence[str] | None = None,
+    href: str | Sequence[str] | None = None,
+    subset: int | tuple[int] | list[int] | None = None,
+    copyright: bool = True,
     # modifiers
-    pathrep=None,
-    inline_js=None,
-
+    pathrep: str | tuple[str, str] | list[str] | None = None,
+    inline_js: str | None = None,
     # style
-    imsize=None,
-    imscale=1,
-    preserve_aspect=True,
-    caption_bottom=True,
-    style=None,
-):
+    imsize: tuple[int, int] | list[int] | None = None,
+    imscale: float = 1,
+    preserve_aspect: bool = True,
+    caption_bottom: bool = True,
+    style: str | None = None,
+) -> None:
     if imsize is None:
-        imsize = [None, None]
+        imsize_list: list[int | None] = [None, None]
     else:
         if not (
-            (isinstance(imsize, list) or type(imsize) is tuple)
-            and len(imsize) == 2 and imsize[0] > 0 and imsize[1] > 0
+            (isinstance(imsize, list) or type(imsize) is tuple)  # noqa: E721
+            and len(imsize) == 2
+            and imsize[0] > 0
+            and imsize[1] > 0
         ):
             raise ValueError(
                 '"imsize" needs to be a column index, or a list/tuple of size 2 specifying '
                 'the width and the height'
             )
+        im_w, im_h = imsize[0], imsize[1]
         if imscale != 1:
-            imsize = (imsize[0]*imscale, imsize[1]*imscale)
+            im_w = round(im_w * imscale)
+            im_h = round(im_h * imscale)
+        imsize_list = [int(im_w), int(im_h)]
 
-    pathrep = parse_pathrep(pathrep)
-    items = parse_content(content, subset, pathrep, 'tile content')
+    pathrep_parsed = parse_pathrep(pathrep)
+
+    if isinstance(content, str):
+        content_desc: str | list[str] = content
+    else:
+        content_desc = list(content)
+
+    items = parse_content(content_desc, subset, pathrep_parsed, 'tile content')
     n_item = len(items)
     if n_item == 0:
         raise ValueError('Empty content')
-    use_caption = caption is not None and caption
-    if use_caption:
-        caption = subsetsel(caption, subset)
+    captions: list[str] = (
+        subsetsel(list(caption), subset) if caption else []  # type: ignore[arg-type]
+    )
+    use_caption: bool = bool(captions)
     if href is not None:
-        href = parse_content(href, subset, pathrep, 'tile href')
+        href_desc: str | list[str] = href if isinstance(href, str) else list(href)
+        href = parse_content(href_desc, subset, pathrep_parsed, 'tile href')
 
     n_row = -(-n_item // n_col)
 
-    def add_caption(r):
-        with tr():
+    def add_caption(r: int) -> None:
+        """Insert caption row *r* (0-based) into the table body."""
+        with tr():  # type: ignore[misc]
             for c in range(n_col):
-                idx = r*n_col + c
-                if idx < len(caption):
-                    td(text(caption[idx]))
+                idx = r * n_col + c
+                if idx < len(captions):
+                    td(text(captions[idx]))
                 else:
                     td()
 
-    with dominate.document(title=title) as doc:
-        with doc.head:
+    with dominate.document(title=title) as doc:  # type: ignore[misc]
+        with doc.head:  # type: ignore[misc]
             meta(charset='utf-8')
 
             css = ''
@@ -98,12 +109,14 @@ def imagetile(
                         add_caption(r)
                     with tr():
                         for c in range(n_col):
-                            idx = r*n_col + c
+                            idx = r * n_col + c
                             if idx < n_item:
-                                if imsize[0] is None or imsize[1] is None:
+                                if imsize_list[0] is None or imsize_list[1] is None:
                                     kw = {}
                                 else:
-                                    kw = imsize_attrs(imsize, preserve_aspect)
+                                    kw = imsize_attrs(
+                                        (int(imsize_list[0]), int(imsize_list[1])), preserve_aspect
+                                    )
                                 tda(href, idx, img_(src=items[idx], **kw))
                             else:
                                 td()
@@ -113,9 +126,9 @@ def imagetile(
         if copyright:
             copyright_html()
 
-        if imsize[0] is None and imscale != 1:
+        if imsize_list[0] is None and imscale != 1:
             jscode = getjs('scaleImg.js')
-            jscode += '\nscaleImg(%g);\n' % (imscale)
+            jscode += f'\nscaleImg({imscale:g});\n'
             script(text(jscode, escape=False))
 
         if inline_js:

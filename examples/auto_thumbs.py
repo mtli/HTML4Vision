@@ -1,7 +1,7 @@
 from html4vision import Col, imagetable
 
 cols = [
-    Col('id1', 'ID'), # 1-based indexing
+    Col('id1', 'ID'),  # 1-based indexing
     Col('img', 'Detections', 'images/det_*.jpg'),
 ]
 

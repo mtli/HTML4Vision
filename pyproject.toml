@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools-scm>=7", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "HTML4Vision"
+dynamic = ["version"]
+description = "A simple HTML visualization tool for computer vision research"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Mengtian (Martin) Li", email = "martinli.work@gmail.com" }
+]
+keywords = ["research", "computer vision", "visualization"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Visualization",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+]
+dependencies = [
+  "Flask",
+  "dominate",
+  "Pillow>=9.1",
+]
+
+[project.urls]
+homepage = "https://github.com/mtli/HTML4Vision"
+
+# Packages discovery
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["html4vision*"]
+
+[tool.setuptools.package-data]
+html4vision = ["*.js"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["__pycache__", "*.pyc"]
+
+[tool.setuptools]
+license-files = ["LICENSE.txt"]
+
+[project.optional-dependencies]
+dev = ["ruff>=0.9", "mypy>=1.10"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+extend-select = ["Q"]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"
+multiline-quotes = "single"
+docstring-quotes = "double"
+avoid-escape = true
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+
+[tool.setuptools_scm]
+write_to = "html4vision/_version.py"
+fallback_version = "0.0.0"

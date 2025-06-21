@@ -1,4 +1,4 @@
-import os
+from os import makedirs
 from html4vision import Col, imagetable
 
 cols = [
@@ -8,8 +8,7 @@ cols = [
     Col('img', 'Amodel Road Mask', 'images/road_*_amodelroad.png'),
 ]
 
-if not os.path.isdir('another-dir'):
-    os.makedirs('another-dir')
+makedirs('another-dir', exist_ok=True)
 
 imagetable(
     cols,

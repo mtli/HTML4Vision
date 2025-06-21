@@ -12,13 +12,12 @@ content = [
 # get filename without extensions
 caption = [path.split('/')[1][:-4] for path in content]
 
-# set hrefs so that clicking an image views it in full size in another tab
-href = content               
-
 imagetile(
-    content, 3, 
-    'tile.html', 'Tiling Example',
-    caption=caption, href=href,
+    content,
+    3,
+    'tile.html',
+    'Tiling Example',
+    caption=caption,
+    href=content,  # set hrefs so that clicking an image views it in full size in another tab
     imscale=0.5,
 )
-
