@@ -73,7 +73,7 @@ imagetable(
     imsize=None, imscale=1, preserve_aspect=True, hori_center_img=False,
     summary_color=None, sticky_header=False, sort_style=None, zebra=False, style=None,
     # interaction
-    overlay_toggle=False, sortable=False,
+    overlay_toggle=False, sortable=False, draggable_columns=False,
     # 3d model viewer
     auto_rotate=False, camera_controls=True, mesh_opt=False,
     # performance
@@ -191,6 +191,16 @@ Once interactive sorting is enabled, a style template can be specified with `sor
 In addition, you will find how to specify a summary row with a particular color in the following example.
 
 Example: `examples/sort.py`
+
+### Column reordering
+
+Enable drag-and-drop column reordering by setting `draggable_columns=True` when generating the table.
+
+Notes:
+- Works with large tables and with `max_image_load_concurrency`; images are moved by DOM reparenting so loading behavior is preserved.
+- If `sticky_header=True` (or your theme provides a sticky header), the header shown while scrolling is a clone. Dropping on the sticky header will still reorder the original table’s header and body; the sticky header is kept in sync.
+- If you use per-column CSS like `td:nth-child(k)`, those styles are position-based and will move with the column when reordered.
+- If you render multiple HTML4Vision tables on the same page and need column reordering on all of them, please ensure each table is generated separately on its own page, or extend the JS to map sticky header clones to their originals.
 
 ### Display toggle
 

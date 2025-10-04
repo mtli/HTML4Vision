@@ -58,6 +58,7 @@ def imagetable(
     # interaction
     overlay_toggle: bool = False,
     sortable: bool = False,
+    draggable_columns: bool = False,
     # 3d model viewer
     auto_rotate: bool = False,
     camera_controls: bool = True,
@@ -398,6 +399,10 @@ def imagetable(
             script(text(jscode, escape=False))
         if overlay_toggle:
             jscode = getjs('overlayToggle.js')
+            script(text(jscode, escape=False))
+        if draggable_columns:
+            jscode = getjs('dragColumns.js')
+            jscode += '\ndragColumns();\n'
             script(text(jscode, escape=False))
         if max_image_load_concurrency is not None:
             jscode = getjs('limitImgLoad.js')
